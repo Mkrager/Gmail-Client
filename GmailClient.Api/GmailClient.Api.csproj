@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>91aa3ddd-1f95-4202-8ca1-a2756586a61e</UserSecretsId>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="11.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\GmailClient.Application\GmailClient.Application.csproj" />
+	  <ProjectReference Include="..\GmailClient.Identity\GmailClient.Identity.csproj" />
+	  <ProjectReference Include="..\GmailClient.Infrastructure\GmailClient.Infrastructure.csproj" />
+	  <ProjectReference Include="..\GmailClient.Persistence\GmailClient.Persistence.csproj" />
+	</ItemGroup>
+
+</Project>
