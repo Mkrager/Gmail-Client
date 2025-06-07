@@ -3,7 +3,7 @@ using GmailClient.Ui.ViewModels;
 
 namespace GmailClient.Ui.Contracts
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationDataService
     {
         Task<ApiResponse<bool>> Login(LoginRequest request);
         Task<ApiResponse<bool>> Register(RegistrationRequest request);

@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace GmailClient.Ui.Services
 {
-    public class AuthenticationService : Contracts.IAuthenticationService
+    public class AuthenticationDataService : Contracts.IAuthenticationDataService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public AuthenticationService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient)
+        public AuthenticationDataService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient)
         {
             _httpClient = httpClient;
             _httpContextAccessor = httpContextAccessor;

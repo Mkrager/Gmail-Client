@@ -16,7 +16,7 @@
         <nav class="navigation">
             @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                <a asp-controller="account" asp-action="overview" asp-route-userId="@userId">Account</a>
+                <a asp-controller="account" asp-action="index" asp-route-userId="@userId">Account</a>
             }
             else
             {

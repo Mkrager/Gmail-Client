@@ -6,9 +6,9 @@ namespace GmailClient.Ui.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthenticationDataService _authenticationService;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
+        public AuthenticationController(IAuthenticationDataService authenticationService)
         {
             _authenticationService = authenticationService;
         }

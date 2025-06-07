@@ -31,7 +31,7 @@ namespace GmailClient.Identity
                 .AddEntityFrameworkStores<GmailClientIdentityDbContext>().AddDefaultTokenProviders();
 
             services.AddTransient<IAuthenticationService, AuthenticationService>();
-            //services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserService, UserService>();
 
             services.AddAuthentication(options =>
             {

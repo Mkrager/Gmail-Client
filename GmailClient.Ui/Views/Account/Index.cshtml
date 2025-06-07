@@ -1,0 +1,20 @@
+﻿@model UserDetailsResponse
+
+<div class="card">
+    <h2>Account Information</h2>
+
+    <div class="field">
+        <label>Username</label>
+        <p>@Model.UserName</p>
+    </div>
+
+    <div class="field">
+        <label>Email</label>
+        <p>@Model.Email</p>
+    </div>
+
+    <div class="button-group">
+        <button class="btn btn-google">Connect with Google</button>
+        <button class="btn btn-logout">Logout</button>
+    </div>
+</div>
