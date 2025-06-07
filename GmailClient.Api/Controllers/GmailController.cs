@@ -1,6 +1,5 @@
 ﻿using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GmailClient.Api.Controllers

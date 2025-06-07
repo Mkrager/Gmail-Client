@@ -11,7 +11,7 @@ namespace GmailClient.Identity
 
         }
 
-        public GmailClientIdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
+        public GmailClientIdentityDbContext(DbContextOptions<GmailClientIdentityDbContext> options) : base(options)
         {
             
         }

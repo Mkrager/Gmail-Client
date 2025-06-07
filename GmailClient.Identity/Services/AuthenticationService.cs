@@ -52,7 +52,7 @@ namespace GmailClient.Identity.Services
             return response;
         }
 
-        public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)
+        public async Task<string> RegisterAsync(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByNameAsync(request.UserName);
 
@@ -78,7 +78,7 @@ namespace GmailClient.Identity.Services
 
                 if (result.Succeeded)
                 {
-                    return new RegistrationResponse() { UserId = user.Id };
+                    return user.Id;
                 }
                 else
                 {

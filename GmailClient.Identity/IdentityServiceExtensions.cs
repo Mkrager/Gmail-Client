@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
@@ -21,7 +22,9 @@ namespace GmailClient.Identity
         {
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-            services.AddDbContext<GmailClientIdentityDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("OnlineCoursePlatformIdentityConnectionString"),
+            services.AddDbContext<GmailClientIdentityDbContext>
+                (options => 
+                options.UseSqlServer(configuration.GetConnectionString("GmailClientIdentityConnectionString"),
                 b => b.MigrationsAssembly(typeof(GmailClientIdentityDbContext).Assembly.FullName)));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -80,6 +83,7 @@ namespace GmailClient.Identity
                 .AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
                 {
                     googleOptions.SaveTokens = true;
+                    googleOptions.AccessType = "offline";
                     googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
                     googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
                     googleOptions.CallbackPath = "/signin-google";

@@ -13,7 +13,7 @@ namespace GmailClient.Persistence
         {
             services.AddDbContext<GmailClientDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString
-            ("StudentsAvailabilityConnectionString")));
+            ("GmailClientConnectionString")));
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
 

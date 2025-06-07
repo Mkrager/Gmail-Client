@@ -1,5 +1,6 @@
 ﻿using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Infrastructure.Gmail;
+using GmailClient.Infrastructure.Token;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,7 @@ namespace GmailClient.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IGmailService, GmailService>();
+            services.AddTransient<ITokenService, TokenService>();
 
             return services;
         }

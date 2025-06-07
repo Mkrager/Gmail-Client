@@ -4,6 +4,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace GmailClient.Infrastructure.Gmail
 {
@@ -32,7 +33,7 @@ namespace GmailClient.Infrastructure.Gmail
                 {
                     foreach (var msg in response.Messages)
                     {
-                        var message = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync(); // <-- _gmailService -> service
+                        var message = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
 
                         var headers = message.Payload.Headers;
 
