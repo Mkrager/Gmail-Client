@@ -2,6 +2,6 @@
 {
     public interface ITokenService
     {
-        Task<string?> GetAccessTokenAsync(string refreshToken);
+        Task<(string? AccessToken, DateTime ExpiresAt)> GetAccessTokenAsync(string refreshToken);
     }
 }

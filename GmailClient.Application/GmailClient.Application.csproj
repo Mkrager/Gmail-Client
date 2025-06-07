@@ -15,10 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Exceptions\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\GmailClient.DomaIn\GmailClient.Domain.csproj" />
 	</ItemGroup>
 

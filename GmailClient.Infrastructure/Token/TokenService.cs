@@ -15,30 +15,40 @@ namespace GmailClient.Infrastructure.Token
             _clientSecret = config["Authentication:Google:ClientSecret"]!;
         }
 
-        public async Task<string?> GetAccessTokenAsync(string refreshToken)
+        public async Task<(string? AccessToken, DateTime ExpiresAt)> GetAccessTokenAsync(string refreshToken)
         {
             using var client = new HttpClient();
 
             var values = new Dictionary<string, string>
-            {
-                { "client_id", _clientId },
-                { "client_secret", _clientSecret },
-                { "refresh_token", refreshToken },
-                { "grant_type", "refresh_token" }
-            };
+                {
+                    { "client_id", _clientId },
+                    { "client_secret", _clientSecret },
+                    { "refresh_token", refreshToken },
+                    { "grant_type", "refresh_token" }
+                };
 
             var content = new FormUrlEncodedContent(values);
-
             var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
 
             if (!response.IsSuccessStatusCode)
-                return null;
+                return (null, DateTime.MinValue);
 
             var json = await response.Content.ReadAsStringAsync();
             var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
 
-            return data?["access_token"].GetString();
-        }
+            if (data is null || !data.TryGetValue("access_token", out var accessTokenElement))
+                return (null, DateTime.MinValue);
 
+            var accessToken = accessTokenElement.GetString();
+
+            DateTime expiresAt = DateTime.MinValue;
+            if (data.TryGetValue("expires_in", out var expiresInElement))
+            {
+                var expiresInSeconds = expiresInElement.GetInt32();
+                expiresAt = DateTime.UtcNow.AddSeconds(expiresInSeconds);
+            }
+
+            return (accessToken, expiresAt);
+        }
     }
 }

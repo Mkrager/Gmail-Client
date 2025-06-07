@@ -16,6 +16,7 @@ namespace GmailClient.Persistence
             ("GmailClientConnectionString")));
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IUserGmailTokenRepository, UserGmailTokenRepository>();
 
             return services;
         }

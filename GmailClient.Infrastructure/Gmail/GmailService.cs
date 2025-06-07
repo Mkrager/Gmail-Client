@@ -1,10 +1,10 @@
 ﻿using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.DTOs;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
-using Microsoft.Extensions.Configuration;
-using System.Text.Json;
+using System.Net.Mail;
+using System.Text;
 
 namespace GmailClient.Infrastructure.Gmail
 {
@@ -55,6 +55,42 @@ namespace GmailClient.Infrastructure.Gmail
             } while (pageToken != null);
 
             return messages;
+        }
+
+        public async Task SendEmailAsync(string accessToken, string to, string subject, string body)
+        {
+            var credential = GoogleCredential.FromAccessToken(accessToken);
+            using var service = new Google.Apis.Gmail.v1.GmailService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "My Gmail API App"
+            });
+
+            var profile = await service.Users.GetProfile("me").ExecuteAsync();
+            string userEmail = profile.EmailAddress;
+
+            var mailMessage = new MailMessage();
+            mailMessage.To.Add(to.Trim());
+            mailMessage.Subject = subject;
+            mailMessage.Body = body;
+            mailMessage.IsBodyHtml = false;
+            mailMessage.From = new MailAddress(userEmail);
+
+            var mimeMessage = MimeKit.MimeMessage.CreateFromMailMessage(mailMessage);
+
+            using var stream = new MemoryStream();
+            await mimeMessage.WriteToAsync(stream);
+            var rawMessage = Convert.ToBase64String(stream.ToArray())
+                .Replace("+", "-")
+                .Replace("/", "_")
+                .Replace("=", "");
+
+            var message = new Message
+            {
+                Raw = rawMessage
+            };
+
+            await service.Users.Messages.Send(message, "me").ExecuteAsync();
         }
     }
 }

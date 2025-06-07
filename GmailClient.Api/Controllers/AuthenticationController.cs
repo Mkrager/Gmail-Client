@@ -41,41 +41,5 @@ namespace GmailClient.Api.Controllers
 
             return Ok(dtos);
         }
-
-        [HttpGet("signin-google")]
-        public IActionResult SignInWithGoogle()
-        {
-            var redirectUrl = Url.Action("GoogleResponse", "Authentication");
-            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-        }
-
-        [HttpGet("google-response")]
-        public async Task<IActionResult> GoogleResponse()
-        {
-            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-
-            if (!result.Succeeded)
-                return BadRequest();
-
-            var accessToken = result.Properties.GetTokenValue("access_token");
-            var refreshToken = result.Properties.GetTokenValue("refresh_token");
-            var expiresAt = result.Properties.ExpiresUtc?.UtcDateTime ?? DateTime.UtcNow.AddHours(1);
-            var userId = result.Principal?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest("User not found");
-
-            var command = new SaveTokensCommand
-            {
-                AccessToken = accessToken ?? "",
-                RefreshToken = refreshToken ?? "",
-                ExpiresAt = expiresAt
-            };
-
-            var id = await mediator.Send(command);
-
-            return Ok(new { TokenId = id, Message = "Token saved" });
-        }
     }
 }
