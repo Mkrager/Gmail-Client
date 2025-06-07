@@ -16,7 +16,7 @@ namespace GmailClient.Infrastructure.Gmail
             using var service = new Google.Apis.Gmail.v1.GmailService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "My Gmail API App"
+                ApplicationName = "EmailSender"
             });
 
             var messages = new List<GmailMessageDto>();
@@ -63,7 +63,7 @@ namespace GmailClient.Infrastructure.Gmail
             using var service = new Google.Apis.Gmail.v1.GmailService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "My Gmail API App"
+                ApplicationName = "EmailSender"
             });
 
             var profile = await service.Users.GetProfile("me").ExecuteAsync();
