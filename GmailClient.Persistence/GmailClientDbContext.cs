@@ -6,12 +6,10 @@ namespace GmailClient.Persistence
 {
     public class GmailClientDbContext : DbContext
     {
-        private readonly ICurrentUserService _currentUserService;
 
-        public GmailClientDbContext(DbContextOptions<GmailClientDbContext> options, ICurrentUserService currentUserService)
+        public GmailClientDbContext(DbContextOptions<GmailClientDbContext> options)
             : base(options)
         {
-            _currentUserService = currentUserService;
         }
 
         public DbSet<UserGmailToken> UserGmailTokens { get; set; }

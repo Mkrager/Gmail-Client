@@ -11,11 +11,11 @@
 //        {
 //            _tokenService = tokenService;
 //        }
-//        public Task<string> Handle(GetAccessTokenQuery request, CancellationToken cancellationToken)
+//        public async Task<string> Handle(GetAccessTokenQuery request, CancellationToken cancellationToken)
 //        {
-//            var accessToken = _tokenService.GetAccessTokenAsync(request.refreshToken);
-            
-//            if(accessToken == null)
+//            var accessToken = await _tokenService.GetAccessTokenAsync(request.refreshToken);
+
+//            if (accessToken.AccessToken == null)
 //            {
 //                throw new ArgumentNullException(nameof(accessToken));
 //            }
