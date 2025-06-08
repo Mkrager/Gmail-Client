@@ -7,12 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        //options.LoginPath = "/account/login";
-        //options.AccessDeniedPath = "/account/denied";
+    .AddCookie(options => {
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/denied";
     });
-
 builder.Services.AddHttpClient();
 
 builder.Services.AddHttpContextAccessor();

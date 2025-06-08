@@ -25,13 +25,15 @@ namespace GmailClient.Api
 
             builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddMemoryCache();
+
             builder.Services.AddControllers();
 
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("Open", policy =>
                 {
-                    policy.WithOrigins("")
+                    policy.WithOrigins("https://localhost:7167")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
                 });

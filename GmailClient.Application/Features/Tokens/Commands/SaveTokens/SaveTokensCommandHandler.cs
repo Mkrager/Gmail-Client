@@ -19,6 +19,7 @@ namespace GmailClient.Application.Features.Tokens.Commands.SaveTokens
         public async Task<Guid> Handle(SaveTokensCommand request, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<UserGmailToken>(request);
+            entity.ExpiresAt = DateTime.UtcNow.AddSeconds(request.ExpiresAt);
             var added = await _tokenRepository.AddAsync(entity);
             return added.Id;
         }

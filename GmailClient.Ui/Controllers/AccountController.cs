@@ -6,10 +6,12 @@ namespace GmailClient.Ui.Controllers
     public class AccountController : Controller
     {
         private readonly IUserDataService _userDataService;
+        private readonly IAuthenticationDataService _authenticationDataService;
 
-        public AccountController(IUserDataService userDataService)
+        public AccountController(IUserDataService userDataService, IAuthenticationDataService authenticationDataService)
         {
             _userDataService = userDataService;
+            _authenticationDataService = authenticationDataService;
         }
 
         public async Task<IActionResult> Index(string userId)
