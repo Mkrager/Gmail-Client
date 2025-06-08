@@ -4,6 +4,6 @@ namespace GmailClient.Ui.Contracts
 {
     public interface IUserDataService
     {
-        Task<UserDetailsResponse> GetUserDetails(string userId);
+        Task<UserDetailsResponse> GetUserDetails();
     }
 }

@@ -14,9 +14,9 @@ namespace GmailClient.Ui.Controllers
             _authenticationDataService = authenticationDataService;
         }
 
-        public async Task<IActionResult> Index(string userId)
+        public async Task<IActionResult> Index()
         {
-            var user = await _userDataService.GetUserDetails(userId);
+            var user = await _userDataService.GetUserDetails();
             return View(user);
         }
     }

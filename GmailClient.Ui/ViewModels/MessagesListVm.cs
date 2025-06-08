@@ -1,8 +1,7 @@
-﻿namespace GmailClient.Application.DTOs
+﻿namespace GmailClient.Ui.ViewModels
 {
-    public class GmailMessageDto
+    public class MessagesListVm
     {
-        public string Id { get; set; } = string.Empty;
         public string Subject { get; set; } = string.Empty;
         public string From { get; set; } = string.Empty;
         public string Date { get; set; } = string.Empty;

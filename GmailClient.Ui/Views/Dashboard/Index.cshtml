@@ -1,0 +1,53 @@
+﻿@model List<MessagesListVm>
+@using System.Text.Json
+
+<div class="sidebar">
+    <h2>Menu</h2>
+    <button>Main</button>
+    <button>Send letter</button>
+    <button>Incoming</button>
+    <button>Settings</button>
+</div>
+
+<div class="main">
+    <h1>Recent Emails</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var letters in Model)
+            {
+                <tr>
+                    <td>@letters.Subject</td>
+                    <td>@letters.From</td>
+                    <td>@letters.Date</td>
+                    <td class="@(letters.IsSent ? "status-sent" : "status-inbox")">
+                        @(letters.IsSent ? "Sent" : "Inbox")
+                    </td>
+                    <td>
+                        <button class="btn-view"
+                                data-body='@Html.Raw(JsonSerializer.Serialize(letters.Body))'
+                                onclick="openModal(this.dataset.body)">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal" id="emailModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3>Email Content</h3>
+        <textarea id="emailContent" readonly></textarea>
+    </div>
+</div>

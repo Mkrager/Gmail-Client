@@ -8,6 +8,7 @@
 body {
     display: flex;
     justify-content: center;
+    min-height: 100vh;
     align-items: center;
     min-height: 100vh;
     background: url("/img/japane.jpg") no-repeat;
@@ -344,4 +345,149 @@ h2 {
 
 .button-group {
     margin-top: 2rem;
+}
+
+
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    top: 40px;
+    background: url("img/japane.jpg") no-repeat;
+    background-size: cover;
+    background-position: 95%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 0;
+    padding: 20px 10px 20px;
+    color: white;
+}
+
+    .sidebar::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
+        z-index: 1;
+    }
+
+    .sidebar * {
+        position: relative;
+        z-index: 2;
+    }
+
+    .sidebar h2 {
+        margin-top: 20px;
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .sidebar button {
+        margin: 15px 0;
+        font-size: 18px ;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        background-color: rgba(0, 0, 0, 0);
+        color: white;
+        z-index: 2;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .sidebar button:hover {
+            background: #66666644;
+        }
+
+.main {
+    flex-grow: 1;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px;
+    background: #fff;
+    margin-top: 110px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+th,
+td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #e0e0e0;
+}
+
+.status-received {
+    color: green;
+}
+
+.status-sent {
+    color: blue;
+}
+
+.btn-view {
+    padding: 5px 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 10px;
+    position: relative;
+}
+
+    .modal-content textarea {
+        width: 100%;
+        height: 300px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-family: monospace;
+        padding: 10px;
+    }
+
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
 }

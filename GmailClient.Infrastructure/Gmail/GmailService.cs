@@ -40,13 +40,19 @@ namespace GmailClient.Infrastructure.Gmail
                         string subject = headers.FirstOrDefault(h => h.Name == "Subject")?.Value ?? "";
                         string from = headers.FirstOrDefault(h => h.Name == "From")?.Value ?? "";
                         string date = headers.FirstOrDefault(h => h.Name == "Date")?.Value ?? "";
+                        string body = GetMessageBody(message);
+                        bool isSent = message.LabelIds.Contains("SENT");
+                        bool isInbox = message.LabelIds.Contains("INBOX");
 
                         messages.Add(new GmailMessageDto
                         {
                             Id = msg.Id,
                             Subject = subject,
                             From = from,
-                            Date = date
+                            Date = date,
+                            Body = body,
+                            IsSent = isSent,
+                            IsInbox = isInbox,
                         });
                     }
                 }
@@ -91,6 +97,48 @@ namespace GmailClient.Infrastructure.Gmail
             };
 
             await service.Users.Messages.Send(message, "me").ExecuteAsync();
+        }
+
+        private string GetMessageBody(Message message)
+        {
+            if (message.Payload.Body?.Data != null)
+            {
+                return DecodeBase64(message.Payload.Body.Data);
+            }
+
+            if (message.Payload.Parts != null)
+            {
+                foreach (var part in message.Payload.Parts)
+                {
+                    if (part.MimeType == "text/plain" || part.MimeType == "text/html")
+                    {
+                        if (part.Body?.Data != null)
+                            return DecodeBase64(part.Body.Data);
+                    }
+
+                    if (part.Parts != null)
+                    {
+                        foreach (var subPart in part.Parts)
+                        {
+                            if (subPart.MimeType == "text/plain" || subPart.MimeType == "text/html")
+                            {
+                                if (subPart.Body?.Data != null)
+                                    return DecodeBase64(subPart.Body.Data);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
+
+        private string DecodeBase64(string base64Data)
+        {
+            var cleaned = base64Data.Replace("-", "+").Replace("_", "/");
+            var bytes = Convert.FromBase64String(cleaned);
+            return Encoding.UTF8.GetString(bytes);
         }
     }
 }

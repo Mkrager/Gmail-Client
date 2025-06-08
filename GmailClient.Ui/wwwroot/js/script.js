@@ -36,3 +36,18 @@ async function signInWithGoogle() {
     window.open(googleUrl, "GoogleLogin", "width=500,height=600");
 }
 
+function openModal(encodedContent) {
+    const decoded = JSON.parse(encodedContent); 
+    document.getElementById("emailContent").value = decoded;
+    document.getElementById("emailModal").style.display = "flex";
+}
+function closeModal() {
+    document.getElementById("emailModal").style.display = "none";
+}
+
+window.onclick = function (e) {
+    const modal = document.getElementById("emailModal");
+    if (e.target === modal) {
+        closeModal();
+    }
+};

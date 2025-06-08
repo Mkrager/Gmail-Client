@@ -5,15 +5,17 @@ using System.Text.Json;
 
 namespace GmailClient.Ui.Services
 {
-    public class UserDataService : IUserDataService
+    public class GmailDataService : IGmailDataService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly IAuthenticationDataService _authenticationDataService;
 
-        public UserDataService(HttpClient httpClient, IAuthenticationDataService authenticationDataService)
+        public GmailDataService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient, IAuthenticationDataService authenticationDataService)
         {
             _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -21,9 +23,9 @@ namespace GmailClient.Ui.Services
             _authenticationDataService = authenticationDataService;
         }
 
-        public async Task<UserDetailsResponse> GetUserDetails()
+        public async Task<List<MessagesListVm>> GetAllMessages()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/User/");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/Gmail");
 
             string accessToken = _authenticationDataService.GetAccessToken();
 
@@ -35,12 +37,12 @@ namespace GmailClient.Ui.Services
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                var userDetails = JsonSerializer.Deserialize<UserDetailsResponse>(responseContent, _jsonOptions);
+                var messages = JsonSerializer.Deserialize<List<MessagesListVm>>(responseContent, _jsonOptions);
 
-                return userDetails;
+                return messages;
             }
 
-            return new UserDetailsResponse();
+            return new List<MessagesListVm>();
         }
     }
 }

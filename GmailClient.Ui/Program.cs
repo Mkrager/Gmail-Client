@@ -17,6 +17,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IAuthenticationDataService, AuthenticationDataService>();
 builder.Services.AddScoped<IUserDataService, UserDataService>();
+builder.Services.AddScoped<IGmailDataService, GmailDataService>();
 
 builder.Services.AddControllersWithViews();
 
