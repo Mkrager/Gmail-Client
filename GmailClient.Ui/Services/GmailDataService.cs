@@ -7,15 +7,13 @@ namespace GmailClient.Ui.Services
 {
     public class GmailDataService : IGmailDataService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly IAuthenticationDataService _authenticationDataService;
 
-        public GmailDataService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient, IAuthenticationDataService authenticationDataService)
+        public GmailDataService(HttpClient httpClient, IAuthenticationDataService authenticationDataService)
         {
             _httpClient = httpClient;
-            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -43,6 +41,24 @@ namespace GmailClient.Ui.Services
             }
 
             return new List<MessagesListVm>();
+        }
+
+        public async Task<bool> SendEmailAsync(string to, string subject, string body)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:7075/api/Gmail");
+
+            string accessToken = _authenticationDataService.GetAccessToken();
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

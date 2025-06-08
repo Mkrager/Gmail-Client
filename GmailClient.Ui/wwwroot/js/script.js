@@ -51,3 +51,28 @@ window.onclick = function (e) {
         closeModal();
     }
 };
+
+let editorInstance;
+
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btnSendLetter').addEventListener('click', openSendLetterModal);
+});
+
+function openSendLetterModal() {
+    document.getElementById('sendLetterModal').style.display = 'block';
+    alert('opened');
+    if (!editorInstance) {
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .then(editor => {
+                editorInstance = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}
+
+function closeSendLetterModal() {
+    document.getElementById('sendLetterModal').style.display = 'none';
+}

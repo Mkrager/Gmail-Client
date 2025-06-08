@@ -1,4 +1,6 @@
-﻿using GmailClient.Application.Contracts.Services;
+﻿using FluentValidation;
+using GmailClient.Application.Behaviours;
+using GmailClient.Application.Contracts.Services;
 using GmailClient.Application.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +18,8 @@ namespace GmailClient.Application
 
             services.AddScoped<IAccessTokenManager, AccessTokenManager>();
 
-            //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             return services;
         }

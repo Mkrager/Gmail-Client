@@ -4,7 +4,7 @@
 <div class="sidebar">
     <h2>Menu</h2>
     <button>Main</button>
-    <button>Send letter</button>
+    <button id="btnSendLetter">Send letter</button>
     <button>Incoming</button>
     <button>Settings</button>
 </div>
@@ -49,5 +49,18 @@
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <h3>Email Content</h3>
         <textarea id="emailContent" readonly></textarea>
+    </div>
+</div>
+
+<div class="modal" id="sendLetterModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSendLetterModal()">&times;</span>
+        <h3>Send Letter</h3>
+        <form id="sendLetterForm" method="post" onsubmit="return sendLetter(event)">
+            <input type="text" name="Subject" placeholder="Subject" required />
+            <input type="email" name="To" placeholder="To" required />
+            <textarea name="Body" id="editor"></textarea>
+            <button type="submit">Send</button>
+        </form>
     </div>
 </div>

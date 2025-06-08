@@ -1,4 +1,5 @@
 ﻿using GmailClient.Ui.Contracts;
+using GmailClient.Ui.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GmailClient.Ui.Controllers
@@ -13,8 +14,9 @@ namespace GmailClient.Ui.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var messages = await _gmailDataService.GetAllMessages();
-            return View(messages);
+            //var messages = await _gmailDataService.GetAllMessages();
+            //return View(messages);
+            return View(new List<MessagesListVm>());
         }
     }
 }
