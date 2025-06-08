@@ -3,6 +3,8 @@ using GmailClient.Persistence;
 using GmailClient.Application;
 using GmailClient.Infrastructure;
 using GmailClient.Identity;
+using GmailClient.Api.Services;
+using GmailClient.Application.Contracts;
 
 
 namespace GmailClient.Api
@@ -18,6 +20,8 @@ namespace GmailClient.Api
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddPersistenceServices(builder.Configuration);
             builder.Services.AddIdentityServices(builder.Configuration);
+
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             builder.Services.AddHttpContextAccessor();
 

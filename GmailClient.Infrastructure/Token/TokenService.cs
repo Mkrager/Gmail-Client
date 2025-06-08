@@ -1,4 +1,5 @@
 ﻿using GmailClient.Application.Contracts.Infrastructure;
+using GmailClient.Application.DTOs;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
@@ -15,7 +16,7 @@ namespace GmailClient.Infrastructure.Token
             _clientSecret = config["Authentication:Google:ClientSecret"]!;
         }
 
-        public async Task<(string? AccessToken, DateTime ExpiresAt)> GetAccessTokenAsync(string refreshToken)
+        public async Task<GetAccessTokenResponse> GetAccessTokenAsync(string refreshToken)
         {
             using var client = new HttpClient();
 
@@ -31,13 +32,13 @@ namespace GmailClient.Infrastructure.Token
             var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
 
             if (!response.IsSuccessStatusCode)
-                return (null, DateTime.MinValue);
+                return new GetAccessTokenResponse();
 
             var json = await response.Content.ReadAsStringAsync();
             var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
 
             if (data is null || !data.TryGetValue("access_token", out var accessTokenElement))
-                return (null, DateTime.MinValue);
+                return new GetAccessTokenResponse();
 
             var accessToken = accessTokenElement.GetString();
 
@@ -48,7 +49,7 @@ namespace GmailClient.Infrastructure.Token
                 expiresAt = DateTime.UtcNow.AddSeconds(expiresInSeconds);
             }
 
-            return (accessToken, expiresAt);
+            return new GetAccessTokenResponse() { AccessToken = accessToken, ExpiresAt = expiresAt };
         }
     }
 }

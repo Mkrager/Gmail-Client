@@ -1,7 +1,6 @@
 ﻿using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.Contracts.Persistance;
 using GmailClient.Application.Exceptions;
-using GmailClient.Domain.Entities;
 using MediatR;
 
 namespace GmailClient.Application.Features.Tokens.Commands.UpdateAccessToken
@@ -19,14 +18,18 @@ namespace GmailClient.Application.Features.Tokens.Commands.UpdateAccessToken
 
         public async Task<Unit> Handle(UpdateAccessTokenCommand request, CancellationToken cancellationToken)
         {
-            var newAccessToken = await _tokenService.GetAccessTokenAsync(request.refreshToken);
+            var tokenEntity = (await _userGmailTokenRepository.ListAsync(x => x.UserId == request.UserId)).FirstOrDefault();
+
+            var refreshToken = tokenEntity?.RefreshToken;
+
+            var newAccessToken = await _tokenService.GetAccessTokenAsync(refreshToken);
 
             if (newAccessToken.AccessToken == null)
             {
                 throw new AccessTokenRefreshFailedException("Failed to refresh access token using the provided refresh token.");
             }
 
-            await _userGmailTokenRepository.UpdateAccessTokenAsync(request.userId, newAccessToken.AccessToken, newAccessToken.ExpiresAt);
+            await _userGmailTokenRepository.UpdateAccessTokenAsync(request.UserId, newAccessToken.AccessToken, newAccessToken.ExpiresAt);
 
             return Unit.Value;
         }

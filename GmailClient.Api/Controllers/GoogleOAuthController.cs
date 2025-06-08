@@ -1,4 +1,5 @@
-﻿using GmailClient.Application.DTOs;
+﻿using GmailClient.Application.Contracts;
+using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,8 @@ namespace GmailClient.Api.Controllers
     public class GoogleOAuthController(
         IMediator mediator,
         IConfiguration configuration,
-        IMemoryCache cache) : Controller
+        IMemoryCache cache,
+        ICurrentUserService currentUserService) : Controller
     {
         [HttpGet("google-callback")]
         public async Task<IActionResult> GoogleCallback([FromQuery] string code, [FromQuery] string state)
@@ -54,7 +56,7 @@ namespace GmailClient.Api.Controllers
         [HttpPost("generate-google-state")]
         public IActionResult GenerateGoogleState()
         {
-            var userId = User.FindFirst("uid")?.Value;
+            var userId = currentUserService.UserId;
 
             var stateId = Guid.NewGuid().ToString("N");
 

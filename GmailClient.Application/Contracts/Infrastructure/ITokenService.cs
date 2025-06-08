@@ -1,7 +1,9 @@
-﻿namespace GmailClient.Application.Contracts.Infrastructure
+﻿using GmailClient.Application.DTOs;
+
+namespace GmailClient.Application.Contracts.Infrastructure
 {
     public interface ITokenService
     {
-        Task<(string AccessToken, DateTime ExpiresAt)> GetAccessTokenAsync(string refreshToken);
+        Task<GetAccessTokenResponse> GetAccessTokenAsync(string refreshToken);
     }
 }

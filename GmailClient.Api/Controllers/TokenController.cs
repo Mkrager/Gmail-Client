@@ -1,4 +1,5 @@
-﻿using GmailClient.Application.Features.Tokens.Commands.UpdateAccessToken;
+﻿using GmailClient.Application.Contracts;
+using GmailClient.Application.Features.Tokens.Commands.UpdateAccessToken;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,16 +7,17 @@ namespace GmailClient.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenController(IMediator mediator) : Controller
+    public class TokenController(IMediator mediator, ICurrentUserService currentUserService) : Controller
     {
 
         [HttpPatch(Name = "UpdateAccessToken")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<string>> UpdateAccessToken(string refreshToken, string userId)
+        public async Task<ActionResult<string>> UpdateAccessToken()
         {
-            var dtos = await mediator.Send(new UpdateAccessTokenCommand() { refreshToken = refreshToken });
-            return Ok(dtos);
+            var userId = currentUserService.UserId;
+            await mediator.Send(new UpdateAccessTokenCommand() { UserId = userId });
+            return NoContent();
         }
     }
 }
