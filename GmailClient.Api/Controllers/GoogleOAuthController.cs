@@ -1,6 +1,7 @@
 ﻿using GmailClient.Application.Contracts;
 using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
+using GmailClient.Application.Features.User.Commands.UpdateGoogleConnectionStatus;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,6 +46,12 @@ namespace GmailClient.Api.Controllers
                     AccessToken = tokenInfo.access_token,
                     ExpiresAt = tokenInfo.expires_in,
                     RefreshToken = tokenInfo.refresh_token,
+                    UserId = userId
+                });
+
+                await mediator.Send(new UpdateGoogleConnectionStatusCommand
+                {
+                    IsConnected = true,
                     UserId = userId
                 });
             }

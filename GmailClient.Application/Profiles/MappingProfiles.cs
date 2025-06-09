@@ -13,7 +13,8 @@ namespace GmailClient.Application.Profiles
     {
         public MappingProfiles()
         {
-            CreateMap<GmailMessageDto, GetMessagesListVm>().ReverseMap();
+            CreateMap<GmailMessageDto, GetMessagesListDto>().ReverseMap();
+            CreateMap<GmailMessageResponse, GetMessagesListVm>().ReverseMap();
 
             CreateMap<RegistrationRequest, RegistrationCommand>().ReverseMap();
 
@@ -22,7 +23,8 @@ namespace GmailClient.Application.Profiles
 
             CreateMap<SaveTokensCommand, UserGmailToken>();
 
-            CreateMap<UserDetailsResponse, UserDetailsVm>().ReverseMap();
+            CreateMap<UserDetailsResponse, UserDetailsVm>().ReverseMap()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
         }
     }
 }

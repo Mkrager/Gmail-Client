@@ -10,7 +10,7 @@ namespace GmailClient.Infrastructure.Gmail
 {
     public class GmailService : IGmailService
     {
-        public async Task<List<GmailMessageDto>> GetAllMessagesAsync(string accessToken)
+        public async Task<GmailMessageResponse> GetAllMessagesAsync(string accessToken, string pageToken = null)
         {
             var credential = GoogleCredential.FromAccessToken(accessToken);
             using var service = new Google.Apis.Gmail.v1.GmailService(new BaseClientService.Initializer
@@ -19,50 +19,36 @@ namespace GmailClient.Infrastructure.Gmail
                 ApplicationName = "EmailSender"
             });
 
-            var messages = new List<GmailMessageDto>();
-
             var request = service.Users.Messages.List("me");
-            string pageToken = null;
+            request.MaxResults = 10;
+            request.PageToken = pageToken;
 
-            do
+            var response = await request.ExecuteAsync();
+            var gmailResponse = new GmailMessageResponse();
+
+            if (response.Messages != null)
             {
-                request.PageToken = pageToken;
-                var response = await request.ExecuteAsync();
-
-                if (response.Messages != null)
+                foreach (var msg in response.Messages)
                 {
-                    foreach (var msg in response.Messages)
+                    var message = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
+                    var headers = message.Payload.Headers;
+
+                    gmailResponse.Messages.Add(new GmailMessageDto
                     {
-                        var message = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
-
-                        var headers = message.Payload.Headers;
-
-                        string subject = headers.FirstOrDefault(h => h.Name == "Subject")?.Value ?? "";
-                        string from = headers.FirstOrDefault(h => h.Name == "From")?.Value ?? "";
-                        string date = headers.FirstOrDefault(h => h.Name == "Date")?.Value ?? "";
-                        string body = GetMessageBody(message);
-                        bool isSent = message.LabelIds.Contains("SENT");
-                        bool isInbox = message.LabelIds.Contains("INBOX");
-
-                        messages.Add(new GmailMessageDto
-                        {
-                            Id = msg.Id,
-                            Subject = subject,
-                            From = from,
-                            Date = date,
-                            Body = body,
-                            IsSent = isSent,
-                            IsInbox = isInbox,
-                        });
-                    }
+                        Id = msg.Id,
+                        Subject = headers.FirstOrDefault(h => h.Name == "Subject")?.Value ?? "",
+                        From = headers.FirstOrDefault(h => h.Name == "From")?.Value ?? "",
+                        Date = headers.FirstOrDefault(h => h.Name == "Date")?.Value ?? "",
+                        Body = GetMessageBody(message),
+                        IsSent = message.LabelIds.Contains("SENT"),
+                        IsInbox = message.LabelIds.Contains("INBOX")
+                    });
                 }
+            }
 
-                pageToken = response.NextPageToken;
-            } while (pageToken != null);
-
-            return messages;
+            gmailResponse.NextPageToken = response.NextPageToken;
+            return gmailResponse;
         }
-
         public async Task SendEmailAsync(string accessToken, string to, string subject, string body)
         {
             var credential = GoogleCredential.FromAccessToken(accessToken);

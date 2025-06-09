@@ -13,10 +13,10 @@ namespace GmailClient.Api.Controllers
         [HttpGet(Name = "GetAllMessages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<List<GetMessagesListVm>>> GetAllMessages()
+        public async Task<ActionResult<List<GetMessagesListDto>>> GetAllMessages(string nextPageToken = null)
         {
             var userId = currentUserService.UserId;
-            var dtos = await mediator.Send(new GetMessagesListQuery() { UserId = userId });
+            var dtos = await mediator.Send(new GetMessagesListQuery() { UserId = userId, NextPageToken = nextPageToken });
             return Ok(dtos);
         }
 

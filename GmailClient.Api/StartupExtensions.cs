@@ -5,6 +5,7 @@ using GmailClient.Infrastructure;
 using GmailClient.Identity;
 using GmailClient.Api.Services;
 using GmailClient.Application.Contracts;
+using GmailClient.Api.Middlewares;
 
 
 namespace GmailClient.Api
@@ -44,7 +45,7 @@ namespace GmailClient.Api
 
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
-            //app.UseCustomExceptionHandler();
+            app.UseCustomExceptionHandler();
 
             app.UseHttpsRedirection();
 
@@ -52,7 +53,7 @@ namespace GmailClient.Api
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "OnlineCoursePlatform API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GmailClient API");
             });
 
             app.UseAuthentication();

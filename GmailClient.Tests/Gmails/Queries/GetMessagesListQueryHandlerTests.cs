@@ -34,7 +34,7 @@ namespace GmailClient.Tests.Gmails.Queries
             var result = await handler.Handle(new GetMessagesListQuery() { UserId = "someUserId" }, CancellationToken.None);
 
             Assert.NotNull(result);
-            Assert.Equal(5, result.Count);
+            Assert.Equal(5, result.Messages.Count);
         }
 
         [Fact]

@@ -97,10 +97,15 @@ namespace GmailClient.Tests.Mocks
                 }
             };
 
-            mockService.Setup(service => service.GetAllMessagesAsync(It.IsAny<string>()))
-                .ReturnsAsync(messageList);
+            mockService.Setup(service => service.GetAllMessagesAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new GmailMessageResponse
+                {
+                    Messages = messageList,
+                    NextPageToken = "sometoken"
+                });
 
-            mockService.Setup(service => service.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            mockService.Setup(service => service.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
 
             return mockService;
         }
@@ -150,6 +155,9 @@ namespace GmailClient.Tests.Mocks
 
             mockService.Setup(service => service.GetUserDetails(It.IsAny<string>()))
                 .ReturnsAsync((string userId) => users.FirstOrDefault(x => x.Id == userId));
+
+            mockService.Setup(service => service.SetGoogleConnectedAsync(It.IsAny<string>(), It.IsAny<bool>()))
+                .Returns(Task.CompletedTask);
 
             return mockService;
         }

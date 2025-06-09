@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GmailClient.Application.Features.Gmails.Queries.GetMessagesList
 {
-    public class GetMessagesListQueryHandler : IRequestHandler<GetMessagesListQuery, List<GetMessagesListVm>>
+    public class GetMessagesListQueryHandler : IRequestHandler<GetMessagesListQuery, GetMessagesListVm>
     {
         private readonly IGmailService _gmailService;
         private readonly IMapper _mapper;
@@ -16,12 +16,12 @@ namespace GmailClient.Application.Features.Gmails.Queries.GetMessagesList
             _mapper = mapper;
             _accessTokenManager = accessTokenManager;
         }
-        public async Task<List<GetMessagesListVm>> Handle(GetMessagesListQuery request, CancellationToken cancellationToken)
+        public async Task<GetMessagesListVm> Handle(GetMessagesListQuery request, CancellationToken cancellationToken)
         {
             string accessToken = await _accessTokenManager.GetValidAccessTokenAsync(request.UserId);
 
-            var messages = await _gmailService.GetAllMessagesAsync(accessToken);
-            return _mapper.Map<List<GetMessagesListVm>>(messages);
+            var messages = await _gmailService.GetAllMessagesAsync(accessToken, request.NextPageToken);
+            return _mapper.Map<GetMessagesListVm>(messages);
         }
     }
 }

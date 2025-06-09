@@ -34,8 +34,8 @@ namespace GmailClient.Infrastructure.Token
             if (!response.IsSuccessStatusCode)
                 return new GetAccessTokenResponse();
 
-            var json = await response.Content.ReadAsStringAsync();
-            var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent);
 
             if (data is null || !data.TryGetValue("access_token", out var accessTokenElement))
                 return new GetAccessTokenResponse();

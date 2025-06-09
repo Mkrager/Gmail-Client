@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using GmailClient.Application.Contracts.Identity;
-using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using GmailClient.Application.Features.User.Queries;
 using GmailClient.Application.Profiles;
 using GmailClient.Tests.Mocks;
