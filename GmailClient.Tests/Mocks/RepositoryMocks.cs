@@ -1,7 +1,9 @@
 ﻿using GmailClient.Application.Contracts.Identity;
 using GmailClient.Application.Contracts.Infrastructure;
+using GmailClient.Application.Contracts.Persistance;
 using GmailClient.Application.Contracts.Services;
 using GmailClient.Application.DTOs;
+using GmailClient.Domain.Entities;
 using Moq;
 
 namespace GmailClient.Tests.Mocks
@@ -12,7 +14,7 @@ namespace GmailClient.Tests.Mocks
         {
             var mockService = new Mock<IAuthenticationService>();
 
-            mockService.Setup(repo => repo.AuthenticateAsync(It.IsAny<AuthenticationRequest>()))
+            mockService.Setup(service => service.AuthenticateAsync(It.IsAny<AuthenticationRequest>()))
                 .ReturnsAsync(new AuthenticationResponse
                 {
                     Token = "fake-token",
@@ -22,7 +24,7 @@ namespace GmailClient.Tests.Mocks
                 });
 
 
-            mockService.Setup(repo => repo.RegisterAsync(It.IsAny<RegistrationRequest>()))
+            mockService.Setup(service => service.RegisterAsync(It.IsAny<RegistrationRequest>()))
                 .ReturnsAsync("some-id");
 
             return mockService;
@@ -31,7 +33,7 @@ namespace GmailClient.Tests.Mocks
         {
             var mockService = new Mock<IAccessTokenManager>();
 
-            mockService.Setup(repo => repo.GetValidAccessTokenAsync(It.IsAny<string>()))
+            mockService.Setup(service => service.GetValidAccessTokenAsync(It.IsAny<string>()))
                 .ReturnsAsync("7356783478905");
 
             return mockService;
@@ -95,12 +97,41 @@ namespace GmailClient.Tests.Mocks
                 }
             };
 
-            mockService.Setup(repo => repo.GetAllMessagesAsync(It.IsAny<string>()))
+            mockService.Setup(service => service.GetAllMessagesAsync(It.IsAny<string>()))
                 .ReturnsAsync(messageList);
 
-            mockService.Setup(repo => repo.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            mockService.Setup(service => service.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
             return mockService;
+        }
+
+        public static Mock<IAsyncRepository<UserGmailToken>> GetUserGmailTokenRepository()
+        {
+            var mockRepository = new Mock<IAsyncRepository<UserGmailToken>>();
+
+            var userGmailTokens = new List<UserGmailToken>()
+            {
+                new UserGmailToken()
+                {
+                    ExpiresAt = DateTime.UtcNow.AddHours(1),
+                    AccessToken = "4234323423423",
+                    RefreshToken = "34534534534",
+                    UserId = "45674564645",
+                    Id = Guid.Parse("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+                }
+            };
+
+            mockRepository.Setup(repo => repo.AddAsync(It.IsAny<UserGmailToken>()))
+                .ReturnsAsync((UserGmailToken userGmailToken) =>
+                {
+                    userGmailTokens.Add(userGmailToken);
+                    return userGmailToken;
+                });
+
+            mockRepository.Setup(repo => repo.ListAllAsync())
+                .ReturnsAsync(userGmailTokens);
+
+            return mockRepository;
         }
     }
 }

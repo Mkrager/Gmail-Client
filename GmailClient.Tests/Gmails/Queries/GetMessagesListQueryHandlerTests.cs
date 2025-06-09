@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.Contracts.Services;
+using GmailClient.Application.Features.Gmails.Commands.SendEmail;
 using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using GmailClient.Application.Profiles;
 using GmailClient.Tests.Mocks;
@@ -35,5 +36,21 @@ namespace GmailClient.Tests.Gmails.Queries
             Assert.NotNull(result);
             Assert.Equal(5, result.Count);
         }
+
+        [Fact]
+        public async void Validator_ShouldHaveError_WhenUserIdEmpty()
+        {
+            var validator = new GetMessagesListQueryValidator();
+            var query = new GetMessagesListQuery
+            {
+                UserId = "",
+            };
+
+            var result = await validator.ValidateAsync(query);
+
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, f => f.PropertyName == "UserId");
+        }
+
     }
 }

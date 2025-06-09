@@ -36,7 +36,8 @@ namespace GmailClient.Tests.Gmails.Commands
             { 
                 Body = "TestBody",
                 Subject = "TestSubject",
-                To = "testEmail@email.com"
+                To = "testEmail@email.com",
+                UserId = "645645645645"
 
             }, CancellationToken.None);
 
@@ -50,6 +51,7 @@ namespace GmailClient.Tests.Gmails.Commands
             var query = new SendEmailCommand
             {
                 Body = "",
+                UserId = "523534534",
                 Subject = "TestSubject",
                 To = "testEmail@email.com"
             };
@@ -59,6 +61,5 @@ namespace GmailClient.Tests.Gmails.Commands
             Assert.False(result.IsValid);
             Assert.Contains(result.Errors, f => f.PropertyName == "Body");
         }
-
     }
 }

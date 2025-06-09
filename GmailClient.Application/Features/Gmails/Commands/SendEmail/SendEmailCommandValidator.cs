@@ -17,6 +17,9 @@ namespace GmailClient.Application.Features.Gmails.Commands.SendEmail
             RuleFor(r => r.To)
                 .NotEmpty()
                 .NotEmpty().WithMessage("{PropertyName} is required.");
+            RuleFor(r => r.UserId)
+                .NotEmpty()
+                .NotEmpty().WithMessage("User not found");
         }
     }
 }
