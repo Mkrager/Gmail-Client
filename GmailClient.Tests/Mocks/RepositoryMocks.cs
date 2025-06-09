@@ -133,5 +133,25 @@ namespace GmailClient.Tests.Mocks
 
             return mockRepository;
         }
+
+        public static Mock<IUserService> GetUserService()
+        {
+            var users = new List<UserDetailsResponse>()
+            {
+                new UserDetailsResponse()
+                {
+                    Id = "52543534534",
+                    Email = "email@gmail.com",
+                    UserName = "TestUserName"
+                }
+            };
+
+            var mockService = new Mock<IUserService>();
+
+            mockService.Setup(service => service.GetUserDetails(It.IsAny<string>()))
+                .ReturnsAsync((string userId) => users.FirstOrDefault(x => x.Id == userId));
+
+            return mockService;
+        }
     }
 }

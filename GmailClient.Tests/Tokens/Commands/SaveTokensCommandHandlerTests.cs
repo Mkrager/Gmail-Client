@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using GmailClient.Application.Contracts.Persistance;
-using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
 using GmailClient.Application.Profiles;
 using GmailClient.Domain.Entities;
 using GmailClient.Tests.Mocks;
 using Moq;
 
-namespace GmailClient.Tests.Tokens
+namespace GmailClient.Tests.Tokens.Commands
 {
     public class SaveTokensCommandHandlerTests
     {
