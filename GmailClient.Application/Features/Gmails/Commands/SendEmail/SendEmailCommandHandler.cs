@@ -1,7 +1,5 @@
 ﻿using GmailClient.Application.Contracts.Infrastructure;
-using GmailClient.Application.Contracts.Persistance;
 using GmailClient.Application.Contracts.Services;
-using GmailClient.Domain.Entities;
 using MediatR;
 
 namespace GmailClient.Application.Features.Gmails.Commands.SendEmail
@@ -9,13 +7,11 @@ namespace GmailClient.Application.Features.Gmails.Commands.SendEmail
     public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand>
     {
         private readonly IGmailService _emailService;
-        private readonly IAsyncRepository<UserGmailToken> _userGmailTokenRepository;
         private readonly IAccessTokenManager _accessTokenManager;
 
-        public SendEmailCommandHandler(IGmailService emailService, IAsyncRepository<UserGmailToken> userGmailTokenRepository, IAccessTokenManager accessTokenManager)
+        public SendEmailCommandHandler(IGmailService emailService, IAccessTokenManager accessTokenManager)
         {
             _emailService = emailService;
-            _userGmailTokenRepository = userGmailTokenRepository;
             _accessTokenManager = accessTokenManager;
         }
 
