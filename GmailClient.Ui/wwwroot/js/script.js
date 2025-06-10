@@ -4,26 +4,14 @@ const registerlink = document.querySelector('.register-link');
 const btnPopup = document.querySelector('.btnLogin-popup');
 const iconClose = document.querySelector('.icon-close');
 
-registerlink.addEventListener('click', () => {
-    wrapper.classList.add('active');
-});
+registerlink.addEventListener('click', () => wrapper.classList.add('active'));
+loginlink.addEventListener('click', () => wrapper.classList.remove('active'));
+btnPopup.addEventListener('click', () => wrapper.classList.add('active-popup'));
+iconClose.addEventListener('click', () => wrapper.classList.remove('active-popup'));
 
-loginlink.addEventListener('click', () => {
-    wrapper.classList.remove('active');
-});
-
-btnPopup.addEventListener('click', () => {
-    wrapper.classList.add('active-popup');
-});
-
-iconClose.addEventListener('click', () => {
-    wrapper.classList.remove('active-popup');
-});
 
 async function signInWithGoogle() {
-    //const token = localStorage.getItem("access_token");
-
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNa3JhZ2VyIiwianRpIjoiMjlmYWMyNmQtYTc5Mi00N2E0LThlNjMtYTQ0NzM5ZjNkYzFhIiwiZW1haWwiOiJzbWFnYS5tYXhAZ21haWwuY29tIiwidWlkIjoiMTU1MDFlYTYtNjI5OS00YzZiLThiODAtMDNhOWYyMmRiNmU0IiwiRW5hYmxlZFR3b0ZhY3RvckF1dGgiOiJGYWxzZSIsImV4cCI6MTc1MTkyMjIwMywiaXNzIjoiR21haWxDbGllbnRJZGVudGl0eSIsImF1ZCI6IkdtYWlsQ2xpZW50SWRlbnRpdHlVc2VyIn0.SoZNqSQxtquDNMshYFhJ7v6OffmC0uTG0SONkp2WofE';
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNa3JhZ2VyIiwianRpIjoiOWZkNThmYmMtZWM0Ny00OWQwLTgzZTYtMzQwZGMxMDg0YTU5IiwiZW1haWwiOiJzbWFnYS5tYXhAZ21haWwuY29tIiwidWlkIjoiMTU1MDFlYTYtNjI5OS00YzZiLThiODAtMDNhOWYyMmRiNmU0IiwiRW5hYmxlZFR3b0ZhY3RvckF1dGgiOiJGYWxzZSIsImV4cCI6MTc1MjE0ODI2NiwiaXNzIjoiR21haWxDbGllbnRJZGVudGl0eSIsImF1ZCI6IkdtYWlsQ2xpZW50SWRlbnRpdHlVc2VyIn0.J4oEPu_jNjYVYkxPJETLxkmx0EIm2SEBBX7Ewz6XX-c';
 
     const res = await fetch("https://localhost:7075/api/googleoauth/generate-google-state", {
         method: "POST",
@@ -35,23 +23,95 @@ async function signInWithGoogle() {
     const { googleUrl } = await res.json();
     window.open(googleUrl, "GoogleLogin", "width=500,height=600");
 }
-
 function escapeHtml(str) {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
 }
 
-async function getNext10Messages(nextPageToken) {
-    if (nextPageToken) {
-        document.getElementById('btnLoadMore').style.display = 'inline-block';
-    }    
+function openModal(body) {
+    document.getElementById('emailModal').style.display = 'flex';
 
+    try {
+        const decodedBody = JSON.parse(body);
+
+        if (!window.emailEditor) {
+            ClassicEditor
+                .create(document.querySelector('#emailContent'))
+                .then(editor => {
+                    window.emailEditor = editor;
+                    editor.setData(decodedBody);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById('emailContent').value = decodedBody;
+                });
+        } else {
+            window.emailEditor.setData(decodedBody);
+        }
+    } catch (err) {
+        console.error("Error:", err);
+        document.getElementById('emailContent').value = body;
+    }
+}
+function closeModal() {
+    document.getElementById('emailModal').style.display = 'none';
+}
+function openSendEmailModal() {
+    document.getElementById("sendEmailModal").style.display = "flex";
+
+    if (!window.sendEmailEditor) {
+        ClassicEditor
+            .create(document.querySelector("#sendEmailContent"))
+            .then(editor => {
+                window.sendEmailEditor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}
+
+function closeSendEmailModal() {
+    document.getElementById('sendEmailModal').style.display = 'none';
+}
+
+function sendEmail(event) {
+    event.preventDefault();
+
+    const to = document.getElementById('emailTo').value;
+    const subject = document.getElementById('emailSubject').value;
+    const body = sendEmailEditor.getData();
+
+    fetch('/dashboard/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, subject, body })
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Лист успішно відправлено!');
+                closeSendEmailModal();
+                document.getElementById('sendEmailForm').reset();
+                sendEmailEditor.setData('');
+            } else {
+                alert('Помилка при відправленні листа.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Помилка при відправленні листа.');
+        });
+
+    return false;
+}
+
+async function getNext10Messages(nextPageToken) {
     if (!nextPageToken) return;
 
     const response = await fetch(`/Dashboard/GetMessagesPage?pageToken=${nextPageToken}`);
     if (!response.ok) {
-        alert('Error loading more messages.');
+        alert('Помилка при завантаженні листів.');
         return;
     }
 
@@ -67,7 +127,9 @@ async function getNext10Messages(nextPageToken) {
             <td>${escapeHtml(letters.subject)}</td>
             <td>${escapeHtml(letters.from)}</td>
             <td>${new Date(letters.date).toLocaleDateString('uk-UA')}</td>
-            <td class="${letters.isSent ? 'status-sent' : 'status-inbox'}">${letters.IsSent ? 'Sent' : 'Inbox'}</td>
+            <td class="${letters.isSent ? 'status-sent' : 'status-inbox'}">
+                ${letters.isSent ? 'Sent' : 'Inbox'}
+            </td>
             <td>
                 <button class="btn-view"
                         data-body='${safeHtmlDataBody}'
@@ -89,90 +151,6 @@ async function getNext10Messages(nextPageToken) {
     }
 }
 
-function openSendEmailModal() {
-    window.location.href = '/Dashboard/SendLetter';
-}
-
-
-let emailEditor;
-let sendEmailEditor;
-
-function initEditors() {
-    ClassicEditor
-        .create(document.querySelector('#emailContent'))
-        .then(editor => {
-            emailEditor = editor;
-            emailEditor.isReadOnly = true;
-        })
-        .catch(error => {
-            console.error('Failed to initialize email viewer editor:', error);
-        });
-
-    ClassicEditor
-        .create(document.querySelector('#sendEmailContent'))
-        .then(editor => {
-            sendEmailEditor = editor;
-        })
-        .catch(error => {
-            console.error('Failed to initialize email sender editor:', error);
-        });
-}
-
-function openModal(body) {
-    document.getElementById('emailModal').style.display = 'flex';
-
-    if (emailEditor) {
-        const decodedBody = JSON.parse(body);
-        emailEditor.setData(decodedBody);
-    } else {
-        document.getElementById('emailContent').value = body;
-    }
-}
-
-function closeModal() {
-    document.getElementById('emailModal').style.display = 'none';
-}
-
-function openSendEmailModal() {
-    document.getElementById('sendEmailModal').style.display = 'flex';
-}
-
-function closeSendEmailModal() {
-    document.getElementById('sendEmailModal').style.display = 'none';
-}
-
-function sendEmail(event) {
-    event.preventDefault();
-
-    const to = document.getElementById('emailTo').value;
-    const subject = document.getElementById('emailSubject').value;
-    const body = sendEmailEditor.getData();
-
-    fetch('/dashboard/send', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ to, subject, body })
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('Email sent successfully!');
-                closeSendEmailModal();
-                document.getElementById('sendEmailForm').reset();
-                sendEmailEditor.setData('');
-            } else {
-                alert('Failed to send email.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error sending email.');
-        });
-
-    return false;
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     initEditors();
 
@@ -180,4 +158,4 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sendForm) {
         sendForm.addEventListener('submit', sendEmail);
     }
-})
+});

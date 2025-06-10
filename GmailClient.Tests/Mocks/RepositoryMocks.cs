@@ -3,7 +3,10 @@ using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.Contracts.Persistance;
 using GmailClient.Application.Contracts.Services;
 using GmailClient.Application.DTOs;
+using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
+using GmailClient.Application.Features.User.Commands.UpdateGoogleConnectionStatus;
 using GmailClient.Domain.Entities;
+using MediatR;
 using Moq;
 
 namespace GmailClient.Tests.Mocks
@@ -159,6 +162,9 @@ namespace GmailClient.Tests.Mocks
             mockService.Setup(service => service.SetGoogleConnectedAsync(It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(Task.CompletedTask);
 
+            mockService.Setup(service => service.IsGoogleConnected(It.IsAny<string>()))
+                .ReturnsAsync(true);
+
             return mockService;
         }
         public static Mock<ITokenEncryptionService> GetTokenEncryptionService()
@@ -172,6 +178,54 @@ namespace GmailClient.Tests.Mocks
                 .Returns("decrypt-token");
 
             return mockService;
+        }
+
+        public static Mock<IGoogleOAuthService> GetGoogleOAuthService()
+        {
+            var mockService = new Mock<IGoogleOAuthService>();
+
+            mockService.Setup(service => service.ExchangeCodeForTokensAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new GoogleTokenResponse
+                {
+                    Refresh_token = "someRefreshTokens",
+                    Access_token = "someAccessToken",
+                    Expires_in = 3000,
+                    Id_token = "someId",
+                    Token_type = "someTokenType"
+                });
+
+            mockService.Setup(service => service.GenerateGoogleAuthorizationUrl(It.IsAny<string>()))
+                .Returns("someUrl");
+
+            return mockService;
+        }
+
+        public static Mock<IGoogleOAuthStateService> GetGoogleOAuthStateService()
+        {
+            var mockService = new Mock<IGoogleOAuthStateService>();
+
+            string outUserId = "someUserId";
+
+            mockService.Setup(service => service.TryGetUserIdByState(It.IsAny<string>(), out outUserId))
+                .Returns(true);
+
+            mockService.Setup(service => service.StoreState(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            return mockService;
+        }
+
+        public static Mock<IMediator> GetMediatorService()
+        {
+            var mediator = new Mock<IMediator>();
+
+            mediator
+                .Setup(m => m.Send(It.IsAny<SaveTokensCommand>(), default))
+                .ReturnsAsync(Guid.NewGuid());
+            mediator
+                .Setup(m => m.Send(It.IsAny<UpdateGoogleConnectionStatusCommand>(), default))
+                .ReturnsAsync(Unit.Value);
+
+            return mediator;
         }
     }
 }

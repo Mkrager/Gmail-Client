@@ -28,7 +28,7 @@ namespace GmailClient.Tests.Gmails.Commands
         }
 
         [Fact]
-        public async Task SendEmail_ShouldNotReturn()
+        public async Task SendEmail_ShouldReturnNoContent()
         {
             var handler = new SendEmailCommandHandler(_gmailService.Object, _accessTokenManager.Object);
 
