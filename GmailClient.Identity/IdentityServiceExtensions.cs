@@ -78,17 +78,6 @@ namespace GmailClient.Identity
                         }
                     };
                 });
-                //.AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
-                //{
-                //    googleOptions.SaveTokens = true;
-                //    googleOptions.AccessType = "offline";
-                //    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                //    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-                //    googleOptions.CallbackPath = "/signin-google";
-                //    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.readonly");
-                //    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.modify");
-                //    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.send");
-                //});
         }
     }
 }

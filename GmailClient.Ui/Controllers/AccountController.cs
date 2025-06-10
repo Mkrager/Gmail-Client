@@ -14,10 +14,17 @@ namespace GmailClient.Ui.Controllers
             _authenticationDataService = authenticationDataService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var user = await _userDataService.GetUserDetails();
             return View(user);
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _authenticationDataService.Logout();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.Contracts.Persistance;
 using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
 using GmailClient.Application.Profiles;
@@ -12,9 +13,11 @@ namespace GmailClient.Tests.Tokens.Commands
     {
         private readonly IMapper _mapper;
         private readonly Mock<IAsyncRepository<UserGmailToken>> _userGmailTokenRepository;
-        public SaveTokensCommandHandlerTests()
+        private readonly Mock<ITokenEncryptionService> _tokenEncryptionService;
+         public SaveTokensCommandHandlerTests()
         {
             _userGmailTokenRepository = RepositoryMocks.GetUserGmailTokenRepository();
+            _tokenEncryptionService = RepositoryMocks.GetTokenEncryptionService();
             var configurationProvider = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<MappingProfiles>();
@@ -25,7 +28,7 @@ namespace GmailClient.Tests.Tokens.Commands
         [Fact]
         public async Task Should_Add_Tokens_Successfully()
         {
-            var handler = new SaveTokensCommandHandler(_userGmailTokenRepository.Object, _mapper);
+            var handler = new SaveTokensCommandHandler(_userGmailTokenRepository.Object, _mapper, _tokenEncryptionService.Object);
 
             var command = new SaveTokensCommand()
             {
@@ -43,7 +46,7 @@ namespace GmailClient.Tests.Tokens.Commands
 
             Assert.Equal(2, allUserGmailTokens.Count);
             Assert.Equal(addedTokens.AccessToken, command.AccessToken);
-            Assert.Equal(addedTokens.RefreshToken, command.RefreshToken);
+            Assert.Equal(addedTokens.RefreshToken, "encrypt-token");
             var expectedExpiration = DateTime.UtcNow.AddSeconds(command.ExpiresAt);
             Assert.True((addedTokens.ExpiresAt - expectedExpiration).TotalMilliseconds < 200);
             Assert.Equal(addedTokens.UserId, command.UserId);

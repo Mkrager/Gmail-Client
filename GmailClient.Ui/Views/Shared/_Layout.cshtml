@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GmailSenderClient</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
     <link href="~/css/style.css" rel="stylesheet" />
 </head>
 <body>
@@ -12,7 +13,7 @@
         <nav class="navigation">
             @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                <a asp-controller="dashboard" asp-action="index">Dashboard</a>
+                <a asp-controller="dashboard" asp-action="main">Dashboard</a>
                 <a asp-controller="account" asp-action="index">Account</a>
             }
             else
@@ -26,7 +27,6 @@
 
     @RenderBody()
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script src="~/js/script.js"></script>
 </body>
 </html>

@@ -36,43 +36,148 @@ async function signInWithGoogle() {
     window.open(googleUrl, "GoogleLogin", "width=500,height=600");
 }
 
-function openModal(encodedContent) {
-    const decoded = JSON.parse(encodedContent); 
-    document.getElementById("emailContent").value = decoded;
-    document.getElementById("emailModal").style.display = "flex";
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
 }
+
+async function getNext10Messages(nextPageToken) {
+    if (nextPageToken) {
+        document.getElementById('btnLoadMore').style.display = 'inline-block';
+    }    
+
+    if (!nextPageToken) return;
+
+    const response = await fetch(`/Dashboard/GetMessagesPage?pageToken=${nextPageToken}`);
+    if (!response.ok) {
+        alert('Error loading more messages.');
+        return;
+    }
+
+    const data = await response.json();
+    const tbody = document.querySelector('table tbody');
+
+    data.messages.forEach(letters => {
+        const tr = document.createElement('tr');
+        const jsonBody = JSON.stringify(letters.body);
+        const safeHtmlDataBody = escapeHtml(jsonBody);
+
+        tr.innerHTML = `
+            <td>${escapeHtml(letters.subject)}</td>
+            <td>${escapeHtml(letters.from)}</td>
+            <td>${new Date(letters.date).toLocaleDateString('uk-UA')}</td>
+            <td class="${letters.isSent ? 'status-sent' : 'status-inbox'}">${letters.IsSent ? 'Sent' : 'Inbox'}</td>
+            <td>
+                <button class="btn-view"
+                        data-body='${safeHtmlDataBody}'
+                        onclick="openModal(this.dataset.body)">
+                    View
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+
+    const loadMoreBtn = document.getElementById('btnLoadMore');
+    if (data.nextPageToken) {
+        loadMoreBtn.style.display = 'inline-block';
+        loadMoreBtn.onclick = () => getNext10Messages(data.nextPageToken);
+    } else {
+        loadMoreBtn.style.display = 'none';
+    }
+}
+
+function openSendEmailModal() {
+    window.location.href = '/Dashboard/SendLetter';
+}
+
+
+let emailEditor;
+let sendEmailEditor;
+
+function initEditors() {
+    ClassicEditor
+        .create(document.querySelector('#emailContent'))
+        .then(editor => {
+            emailEditor = editor;
+            emailEditor.isReadOnly = true;
+        })
+        .catch(error => {
+            console.error('Failed to initialize email viewer editor:', error);
+        });
+
+    ClassicEditor
+        .create(document.querySelector('#sendEmailContent'))
+        .then(editor => {
+            sendEmailEditor = editor;
+        })
+        .catch(error => {
+            console.error('Failed to initialize email sender editor:', error);
+        });
+}
+
+function openModal(body) {
+    document.getElementById('emailModal').style.display = 'flex';
+
+    if (emailEditor) {
+        const decodedBody = JSON.parse(body);
+        emailEditor.setData(decodedBody);
+    } else {
+        document.getElementById('emailContent').value = body;
+    }
+}
+
 function closeModal() {
-    document.getElementById("emailModal").style.display = "none";
+    document.getElementById('emailModal').style.display = 'none';
 }
 
-window.onclick = function (e) {
-    const modal = document.getElementById("emailModal");
-    if (e.target === modal) {
-        closeModal();
+function openSendEmailModal() {
+    document.getElementById('sendEmailModal').style.display = 'flex';
+}
+
+function closeSendEmailModal() {
+    document.getElementById('sendEmailModal').style.display = 'none';
+}
+
+function sendEmail(event) {
+    event.preventDefault();
+
+    const to = document.getElementById('emailTo').value;
+    const subject = document.getElementById('emailSubject').value;
+    const body = sendEmailEditor.getData();
+
+    fetch('/dashboard/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ to, subject, body })
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Email sent successfully!');
+                closeSendEmailModal();
+                document.getElementById('sendEmailForm').reset();
+                sendEmailEditor.setData('');
+            } else {
+                alert('Failed to send email.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error sending email.');
+        });
+
+    return false;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initEditors();
+
+    const sendForm = document.getElementById('sendEmailForm');
+    if (sendForm) {
+        sendForm.addEventListener('submit', sendEmail);
     }
-};
-
-let editorInstance;
-
-window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('btnSendLetter').addEventListener('click', openSendLetterModal);
-});
-
-function openSendLetterModal() {
-    document.getElementById('sendLetterModal').style.display = 'block';
-    alert('opened');
-    if (!editorInstance) {
-        ClassicEditor
-            .create(document.querySelector('#editor'))
-            .then(editor => {
-                editorInstance = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
-}
-
-function closeSendLetterModal() {
-    document.getElementById('sendLetterModal').style.display = 'none';
-}
+})

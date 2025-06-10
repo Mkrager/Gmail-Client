@@ -1,4 +1,5 @@
 ﻿using GmailClient.Application.Contracts;
+using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Gmails.Commands.SendEmail;
 using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using MediatR;
@@ -21,10 +22,10 @@ namespace GmailClient.Api.Controllers
         }
 
         [HttpPost(Name = "SendEmail")]
-        public async Task<ActionResult> SenadEmail(string to, string subject, string body)
+        public async Task<ActionResult> SenadEmail(SendEmailRequest sendEmailRequest)
         {
             var userId = currentUserService.UserId;
-            var dtos = await mediator.Send(new SendEmailCommand() { UserId = userId, Body = body, Subject = subject, To = to });
+            var dtos = await mediator.Send(new SendEmailCommand() { UserId = userId, Body = sendEmailRequest.Body, Subject = sendEmailRequest.Subject, To = sendEmailRequest.To });
             return Ok(dtos);
         }
 

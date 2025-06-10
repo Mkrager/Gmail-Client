@@ -1,6 +1,7 @@
 ﻿using GmailClient.Ui.Contracts;
 using GmailClient.Ui.ViewModels;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace GmailClient.Ui.Services
@@ -21,10 +22,16 @@ namespace GmailClient.Ui.Services
             _authenticationDataService = authenticationDataService;
         }
 
-        public async Task<List<MessagesListVm>> GetAllMessages()
+        public async Task<MessagesListVm> GetAllMessages(string pageToken = null)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/Gmail");
+            var url = $"https://localhost:7075/api/Gmail";
 
+            if (!string.IsNullOrEmpty(pageToken))
+            {
+                url += $"?pageToken={pageToken}";
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
             string accessToken = _authenticationDataService.GetAccessToken();
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -35,23 +42,28 @@ namespace GmailClient.Ui.Services
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                var messages = JsonSerializer.Deserialize<List<MessagesListVm>>(responseContent, _jsonOptions);
+                var messages = JsonSerializer.Deserialize<MessagesListVm>(responseContent, _jsonOptions);
 
                 return messages;
             }
 
-            return new List<MessagesListVm>();
+            return new MessagesListVm();
         }
 
-        public async Task<bool> SendEmailAsync(string to, string subject, string body)
+        public async Task<bool> SendEmailAsync(SendEmailRequest sendEmailRequest)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:7075/api/Gmail");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:7075/api/Gmail")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(sendEmailRequest), Encoding.UTF8, "application/json")
+            };
 
             string accessToken = _authenticationDataService.GetAccessToken();
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await _httpClient.SendAsync(request);
+
+            string error =  await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {

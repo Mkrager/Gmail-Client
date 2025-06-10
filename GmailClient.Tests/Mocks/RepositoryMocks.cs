@@ -161,5 +161,17 @@ namespace GmailClient.Tests.Mocks
 
             return mockService;
         }
+        public static Mock<ITokenEncryptionService> GetTokenEncryptionService()
+        {
+            var mockService = new Mock<ITokenEncryptionService>();
+
+            mockService.Setup(service => service.Encrypt(It.IsAny<string>()))
+                .Returns("encrypt-token");
+
+            mockService.Setup(service => service.Decrypt(It.IsAny<string>()))
+                .Returns("decrypt-token");
+
+            return mockService;
+        }
     }
 }

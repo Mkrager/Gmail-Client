@@ -28,7 +28,7 @@ namespace GmailClient.Application.Services
 
             if (tokenEntity.ExpiresAt <= DateTime.UtcNow)
             {
-                var newToken = await _tokenService.GetAccessTokenAsync(tokenEntity.RefreshToken);
+                var newToken = await _tokenService.GetAccessTokenAsync(decryptedToken);
 
                 if (newToken.AccessToken == null)
                     throw new Exception("Failed to refresh access token");

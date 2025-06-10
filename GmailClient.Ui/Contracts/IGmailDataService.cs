@@ -4,7 +4,7 @@ namespace GmailClient.Ui.Contracts
 {
     public interface IGmailDataService
     {
-        Task<List<MessagesListVm>> GetAllMessages();
-        Task<bool> SendEmailAsync(string to, string subject, string body);
+        Task<MessagesListVm> GetAllMessages(string pageToken = null);
+        Task<bool> SendEmailAsync(SendEmailRequest sendEmailRequest);
     }
 }
