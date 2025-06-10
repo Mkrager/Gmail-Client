@@ -14,9 +14,8 @@ namespace GmailClient.Ui.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            //var messages = await _gmailDataService.GetAllMessages();
-            //return View(messages);
-            return View(new List<MessagesListVm>());
+            var messages = await _gmailDataService.GetAllMessages();
+            return View(messages);
         }
     }
 }

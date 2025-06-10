@@ -8,8 +8,6 @@ using GmailClient.Application.Features.User.Commands.UpdateGoogleConnectionStatu
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using System.Text.Json;
 
 namespace GmailClient.Api.Controllers
 {
@@ -29,7 +27,7 @@ namespace GmailClient.Api.Controllers
             if (!result)
                 return BadRequest("Invalid or expired state.");
 
-            return Redirect(state);
+            return Redirect("https://localhost:7167/GoogleAuth/Index");
         }
 
         [Authorize]

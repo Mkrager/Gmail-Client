@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using GmailClient.Infrastructure.GoogleOAuth;
 
-
 namespace GmailClient.Infrastructure
 {
     public static class InfrastructureServiceRegistration
@@ -15,8 +14,12 @@ namespace GmailClient.Infrastructure
             services.AddTransient<IGmailService, GmailService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IGoogleOAuthStateService, GoogleOAuthStateService>();
+            services.AddTransient<ITokenEncryptionService, TokenEncryptionService>();
+
             services.AddHttpClient<IGoogleOAuthService, GoogleOAuthService>();
+
             services.AddMemoryCache();
+            services.AddDataProtection();
 
             return services;
         }
