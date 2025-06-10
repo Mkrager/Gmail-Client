@@ -6,5 +6,6 @@ namespace GmailClient.Application.Contracts.Identity
     {
         Task<UserDetailsResponse> GetUserDetails(string userId);
         Task SetGoogleConnectedAsync(string userId, bool isConnected);
+        Task<bool> IsGoogleConnected(string userId);
     }
 }

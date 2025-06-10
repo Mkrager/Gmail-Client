@@ -32,6 +32,16 @@ namespace GmailClient.Identity.Services
             return userDetailsResponse;
         }
 
+        public async Task<bool> IsGoogleConnected(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                throw new Exception($"User with ID {userId} not found");
+
+            return user.IsGoogleConnected;
+        }
+
         public async Task SetGoogleConnectedAsync(string userId, bool isConnected)
         {
             var user = await _userManager.FindByIdAsync(userId);
