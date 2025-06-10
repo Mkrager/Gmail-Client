@@ -1,7 +1,6 @@
 ﻿using GmailClient.Application.Contracts.Identity;
 using GmailClient.Identity.Models;
 using GmailClient.Identity.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
@@ -79,18 +77,18 @@ namespace GmailClient.Identity
                             return context.Response.WriteAsync(result);
                         }
                     };
-                })
-                .AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
-                {
-                    googleOptions.SaveTokens = true;
-                    googleOptions.AccessType = "offline";
-                    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-                    googleOptions.CallbackPath = "/signin-google";
-                    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.readonly");
-                    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.modify");
-                    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.send");
                 });
+                //.AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
+                //{
+                //    googleOptions.SaveTokens = true;
+                //    googleOptions.AccessType = "offline";
+                //    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                //    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                //    googleOptions.CallbackPath = "/signin-google";
+                //    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.readonly");
+                //    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.modify");
+                //    googleOptions.Scope.Add("https://www.googleapis.com/auth/gmail.send");
+                //});
         }
     }
 }
