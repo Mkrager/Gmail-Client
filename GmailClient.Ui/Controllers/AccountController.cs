@@ -18,7 +18,14 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userDataService.GetUserDetails();
-            return View(user);
+
+            if (user.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                TempData["Message"] = "Login to account first";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(user.Data);
         }
 
         public async Task<IActionResult> Logout()

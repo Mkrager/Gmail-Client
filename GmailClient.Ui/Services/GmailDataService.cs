@@ -1,4 +1,5 @@
 ﻿using GmailClient.Ui.Contracts;
+using GmailClient.Ui.Helpers;
 using GmailClient.Ui.ViewModels;
 using System.Net.Http.Headers;
 using System.Text;
@@ -22,55 +23,77 @@ namespace GmailClient.Ui.Services
             _authenticationDataService = authenticationDataService;
         }
 
-        public async Task<MessagesListVm> GetAllMessages(string pageToken = null)
+        public async Task<ApiResponse<MessagesListVm>> GetAllMessages(string pageToken = null)
         {
-            var url = $"https://localhost:7075/api/Gmail";
-
-            if (!string.IsNullOrEmpty(pageToken))
+            try
             {
-                url += $"?pageToken={pageToken}";
+                var url = $"https://localhost:7075/api/Gmail";
+
+                if (!string.IsNullOrEmpty(pageToken))
+                {
+                    url += $"?pageToken={pageToken}";
+                }
+
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                string accessToken = _authenticationDataService.GetAccessToken();
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    var messages = JsonSerializer.Deserialize<MessagesListVm>(responseContent, _jsonOptions);
+
+                    return new ApiResponse<MessagesListVm>(System.Net.HttpStatusCode.OK, messages);
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorMessage = JsonErrorHelper.GetErrorMessage(errorContent);
+                return new ApiResponse<MessagesListVm>(System.Net.HttpStatusCode.BadRequest, null, errorMessage);
             }
-
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            string accessToken = _authenticationDataService.GetAccessToken();
-
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            catch (Exception ex)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                var messages = JsonSerializer.Deserialize<MessagesListVm>(responseContent, _jsonOptions);
-
-                return messages;
+                return new ApiResponse<MessagesListVm>(System.Net.HttpStatusCode.BadRequest, null, ex.Message);
             }
-
-            return new MessagesListVm();
         }
 
-        public async Task<bool> SendEmailAsync(SendEmailRequest sendEmailRequest)
+        public async Task<ApiResponse<bool>> SendEmailAsync(SendEmailRequest sendEmailRequest)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:7075/api/Gmail")
+            try
             {
-                Content = new StringContent(JsonSerializer.Serialize(sendEmailRequest), Encoding.UTF8, "application/json")
-            };
+                var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:7075/api/Gmail")
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(sendEmailRequest), Encoding.UTF8, "application/json")
+                };
 
-            string accessToken = _authenticationDataService.GetAccessToken();
+                string accessToken = _authenticationDataService.GetAccessToken();
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            var response = await _httpClient.SendAsync(request);
+                var response = await _httpClient.SendAsync(request);
 
-            string error =  await response.Content.ReadAsStringAsync();
+                string error = await response.Content.ReadAsStringAsync();
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    var messages = JsonSerializer.Deserialize<MessagesListVm>(responseContent, _jsonOptions);
+
+                    return new ApiResponse<bool>(System.Net.HttpStatusCode.OK, true);
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorMessage = JsonErrorHelper.GetErrorMessage(errorContent);
+                return new ApiResponse<bool>(System.Net.HttpStatusCode.BadRequest, false, errorMessage);
             }
-
-            return false;
+            catch(Exception ex)
+            {
+                return new ApiResponse<bool>(System.Net.HttpStatusCode.BadRequest, false, ex.Message);
+            }
         }
     }
 }

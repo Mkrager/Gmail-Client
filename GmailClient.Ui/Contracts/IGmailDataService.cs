@@ -1,10 +1,11 @@
-﻿using GmailClient.Ui.ViewModels;
+﻿using GmailClient.Ui.Services;
+using GmailClient.Ui.ViewModels;
 
 namespace GmailClient.Ui.Contracts
 {
     public interface IGmailDataService
     {
-        Task<MessagesListVm> GetAllMessages(string pageToken = null);
-        Task<bool> SendEmailAsync(SendEmailRequest sendEmailRequest);
+        Task<ApiResponse<MessagesListVm>> GetAllMessages(string pageToken = null);
+        Task<ApiResponse<bool>> SendEmailAsync(SendEmailRequest sendEmailRequest);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GmailClient.Ui.Contracts;
+using GmailClient.Ui.Helpers;
 using GmailClient.Ui.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +18,10 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Login(AuthenticationViewModel request)
         {
             var result = await _authenticationService.Login(request.LoginRequest);
-            //TempData["LoginErrorMessage"] = HandleErrors.HandleResponse<bool>(result, "Success");
 
-            if (result.IsSuccess)
+            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return RedirectToAction("Index", "Home");
+                TempData["LoginErrorMessage"] = HandleErrors.HandleResponse<bool>(result);
             }
 
             return RedirectToAction("Index", "Home");
@@ -31,11 +31,11 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Register(AuthenticationViewModel request)
         {
             var result = await _authenticationService.Register(request.RegistrationRequest);
-            //TempData["LoginErrorMessage"] = HandleErrors.HandleResponse<bool>(result, "Success");
 
-            if (result.IsSuccess)
+            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return RedirectToAction("Index", "Home");
+                TempData["LoginErrorMessage"] = HandleErrors.HandleResponse<bool>(result);
+
             }
 
             return RedirectToAction("Index", "Home");

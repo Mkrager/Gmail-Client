@@ -1,4 +1,5 @@
 ﻿using GmailClient.Ui.Contracts;
+using GmailClient.Ui.Helpers;
 using GmailClient.Ui.ViewModels;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -21,26 +22,35 @@ namespace GmailClient.Ui.Services
             _authenticationDataService = authenticationDataService;
         }
 
-        public async Task<UserDetailsResponse> GetUserDetails()
+        public async Task<ApiResponse<UserDetailsResponse>> GetUserDetails()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/User/");
-
-            string accessToken = _authenticationDataService.GetAccessToken();
-
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/User/");
 
-                var userDetails = JsonSerializer.Deserialize<UserDetailsResponse>(responseContent, _jsonOptions);
+                string accessToken = _authenticationDataService.GetAccessToken();
 
-                return userDetails;
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    var userDetails = JsonSerializer.Deserialize<UserDetailsResponse>(responseContent, _jsonOptions);
+
+                    return new ApiResponse<UserDetailsResponse>(System.Net.HttpStatusCode.OK, userDetails);
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorMessage = JsonErrorHelper.GetErrorMessage(errorContent);
+                return new ApiResponse<UserDetailsResponse>(System.Net.HttpStatusCode.BadRequest, null, errorMessage);
             }
-
-            return new UserDetailsResponse();
+            catch (Exception ex)
+            {
+                return new ApiResponse<UserDetailsResponse>(System.Net.HttpStatusCode.BadRequest, null, ex.Message);
+            }
         }
     }
 }

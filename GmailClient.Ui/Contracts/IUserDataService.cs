@@ -1,9 +1,10 @@
-﻿using GmailClient.Ui.ViewModels;
+﻿using GmailClient.Ui.Services;
+using GmailClient.Ui.ViewModels;
 
 namespace GmailClient.Ui.Contracts
 {
     public interface IUserDataService
     {
-        Task<UserDetailsResponse> GetUserDetails();
+        Task<ApiResponse<UserDetailsResponse>> GetUserDetails();
     }
 }

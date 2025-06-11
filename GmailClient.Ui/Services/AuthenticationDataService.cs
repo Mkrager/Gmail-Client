@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
+using GmailClient.Ui.Helpers;
 
 namespace GmailClient.Ui.Services
 {
@@ -77,10 +78,8 @@ namespace GmailClient.Ui.Services
 
                 var errorContent = await response.Content.ReadAsStringAsync();
 
-                var errorMessages = JsonSerializer.Deserialize<Dictionary<string, string>>(errorContent) ??
-                                    new Dictionary<string, string> { { "error", errorContent } };
-
-                return new ApiResponse<bool>(System.Net.HttpStatusCode.BadRequest, false, errorMessages.GetValueOrDefault("error"));
+                var errorMessage = JsonErrorHelper.GetErrorMessage(errorContent);
+                return new ApiResponse<bool>(System.Net.HttpStatusCode.BadRequest, false, errorMessage);
             }
             catch (Exception ex)
             {
@@ -121,10 +120,8 @@ namespace GmailClient.Ui.Services
 
                 var errorContent = await response.Content.ReadAsStringAsync();
 
-                var errorMessages = JsonSerializer.Deserialize<Dictionary<string, string>>(errorContent) ??
-                                    new Dictionary<string, string> { { "error", errorContent } };
-
-                return new ApiResponse<bool>(System.Net.HttpStatusCode.BadRequest, false, errorMessages.GetValueOrDefault("error"));
+                var errorMessage = JsonErrorHelper.GetErrorMessage(errorContent);
+                return new ApiResponse<bool>(System.Net.HttpStatusCode.BadRequest, false, errorMessage);
             }
             catch (Exception ex)
             {

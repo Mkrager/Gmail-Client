@@ -1,4 +1,5 @@
 ﻿using GmailClient.Ui.Contracts;
+using GmailClient.Ui.Helpers;
 using GmailClient.Ui.ViewModels;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -21,25 +22,34 @@ namespace GmailClient.Ui.Services
             _authenticationDataService = authenticationDataService;
         }
 
-        public async Task<string> GetGoogleSignInUrlAsync()
+        public async Task<ApiResponse<string>> GetGoogleSignInUrlAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7075/api/googleoauth/generate-google-state");
-
-            string accessToken = _authenticationDataService.GetAccessToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7075/api/googleoauth/generate-google-state");
 
-                var json = JsonSerializer.Deserialize<GoogleUrlResponse>(jsonString, _jsonOptions);
+                string accessToken = _authenticationDataService.GetAccessToken();
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                return json?.GoogleUrl;
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+
+                    var url = JsonSerializer.Deserialize<GoogleUrlResponse>(jsonString, _jsonOptions);
+
+                    return new ApiResponse<string>(System.Net.HttpStatusCode.OK, url?.GoogleUrl);
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                var errorMessage = JsonErrorHelper.GetErrorMessage(errorContent);
+                return new ApiResponse<string>(System.Net.HttpStatusCode.BadRequest, null, errorMessage);
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                return new ApiResponse<string>(System.Net.HttpStatusCode.BadRequest, null, ex.Message);
+            }
         }
     }
 }

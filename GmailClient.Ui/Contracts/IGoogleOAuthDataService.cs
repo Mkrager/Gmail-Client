@@ -1,7 +1,9 @@
-﻿namespace GmailClient.Ui.Contracts
+﻿using GmailClient.Ui.Services;
+
+namespace GmailClient.Ui.Contracts
 {
     public interface IGoogleOAuthDataService
     {
-        Task<string> GetGoogleSignInUrlAsync();
+        Task<ApiResponse<string>> GetGoogleSignInUrlAsync();
     }
 }

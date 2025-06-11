@@ -19,10 +19,17 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Main()
         {
             var user = await _userDataService.GetUserDetails();
-            if (user.IsGoogleConnected)
+
+            if(user.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                TempData["Message"] = "Login to account first";
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (user.Data.IsGoogleConnected)
             {
                 var messages = await _gmailDataService.GetAllMessages();
-                return View(messages);
+                return View(messages.Data);
             }
             TempData["Message"] = "For use dashboard you need connect google account";
             return RedirectToAction("Index", "Account");
@@ -34,7 +41,7 @@ namespace GmailClient.Ui.Controllers
             var messages = await _gmailDataService.GetAllMessages(pageToken);
             return Json(new
             {
-                messages = messages.Messages.Select(m => new
+                messages = messages.Data.Messages.Select(m => new
                 {
                     subject = m.Subject,
                     from = m.From,
@@ -42,7 +49,7 @@ namespace GmailClient.Ui.Controllers
                     isSent = m.IsSent,
                     body = m.Body
                 }),
-                nextPageToken = messages.NextPageToken
+                nextPageToken = messages.Data.NextPageToken
             });
         }
 
