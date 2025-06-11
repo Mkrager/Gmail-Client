@@ -1,12 +1,8 @@
 ﻿using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Account.Commands.Registration;
 using GmailClient.Application.Features.Account.Queries.Authentication;
-using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace GmailClient.Api.Controllers
 {

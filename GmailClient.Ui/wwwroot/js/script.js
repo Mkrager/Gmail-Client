@@ -9,20 +9,16 @@ loginlink.addEventListener('click', () => wrapper.classList.remove('active'));
 btnPopup.addEventListener('click', () => wrapper.classList.add('active-popup'));
 iconClose.addEventListener('click', () => wrapper.classList.remove('active-popup'));
 
-
 async function signInWithGoogle() {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNa3JhZ2VyIiwianRpIjoiOWZkNThmYmMtZWM0Ny00OWQwLTgzZTYtMzQwZGMxMDg0YTU5IiwiZW1haWwiOiJzbWFnYS5tYXhAZ21haWwuY29tIiwidWlkIjoiMTU1MDFlYTYtNjI5OS00YzZiLThiODAtMDNhOWYyMmRiNmU0IiwiRW5hYmxlZFR3b0ZhY3RvckF1dGgiOiJGYWxzZSIsImV4cCI6MTc1MjE0ODI2NiwiaXNzIjoiR21haWxDbGllbnRJZGVudGl0eSIsImF1ZCI6IkdtYWlsQ2xpZW50SWRlbnRpdHlVc2VyIn0.J4oEPu_jNjYVYkxPJETLxkmx0EIm2SEBBX7Ewz6XX-c';
-
-    const res = await fetch("https://localhost:7075/api/googleoauth/generate-google-state", {
+    const res = await fetch("/GoogleAuth/Login", {
         method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
     });
 
     const { googleUrl } = await res.json();
     window.open(googleUrl, "GoogleLogin", "width=500,height=600");
 }
+
+
 function escapeHtml(str) {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
@@ -90,28 +86,31 @@ function sendEmail(event) {
     })
         .then(response => {
             if (response.ok) {
-                alert('Лист успішно відправлено!');
+                alert('Success');
                 closeSendEmailModal();
                 document.getElementById('sendEmailForm').reset();
                 sendEmailEditor.setData('');
             } else {
-                alert('Помилка при відправленні листа.');
+                alert('Error');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Помилка при відправленні листа.');
+            alert('Error');
         });
 
     return false;
 }
 
 async function getNext10Messages(nextPageToken) {
+    if (nextPageToken === null) {
+        document.getElementById('btnLoadMore').style.display = 'none';
+    }
+
     if (!nextPageToken) return;
 
     const response = await fetch(`/Dashboard/GetMessagesPage?pageToken=${nextPageToken}`);
     if (!response.ok) {
-        alert('Помилка при завантаженні листів.');
+        alert('Error');
         return;
     }
 

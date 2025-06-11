@@ -9,7 +9,9 @@
 </head>
 <body>
     <header>
-        <h2 class="logo">Email Client</h2>
+        <a class="a-logo" asp-controller="Home" asp-action="Index">
+            <h2 class="logo">Email Client</h2>
+        </a>
         <nav class="navigation">
             @if (User.Identity != null && User.Identity.IsAuthenticated)
             {

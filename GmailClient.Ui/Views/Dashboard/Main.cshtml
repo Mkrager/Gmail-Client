@@ -1,5 +1,6 @@
 ﻿@model MessagesListVm
 @using System.Text.Json
+@using GmailClient.Ui.Helpers
 
 <div class="sidebar">
     <h2>Menu</h2>
@@ -23,9 +24,10 @@
             @foreach (var letters in Model.Messages)
             {
                 <tr>
+                    я
                     <td>@letters.Subject</td>
                     <td>@letters.From</td>
-                    <td>@letters.Date</td>
+                    <td>@DateHelper.FormatEmailDate(letters.Date)</td>
                     <td class="@(letters.IsSent ? "status-sent" : "status-inbox")">
                         @(letters.IsSent ? "Sent" : "Inbox")
                     </td>
@@ -41,7 +43,7 @@
         </tbody>
     </table>
 
-    <button id="btnLoadMore" class="btn" onclick="getNext10Messages('@Model.NextPageToken')">Load more</button>
+    <button id="btnLoadMore" class="btn-email" onclick="getNext10Messages('@Model.NextPageToken')">Load more</button>
 </div>
 
 <div class="modal" id="emailModal">
@@ -70,7 +72,7 @@
             <label for="sendEmailContent">Body:</label><br />
             <textarea id="sendEmailContent" name="sendEmailContent"></textarea>
 
-            <button class="btn" type="submit">Send</button>
+            <button class="btn-email" type="submit">Send</button>
         </form>
     </div>
 </div>

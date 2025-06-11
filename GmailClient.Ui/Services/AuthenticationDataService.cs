@@ -65,9 +65,9 @@ namespace GmailClient.Ui.Services
 
                         _httpContextAccessor.HttpContext.Response.Cookies.Append("access_token", jwtToken, new CookieOptions
                         {
-                            HttpOnly = true,
-                            Secure = true,
-                            SameSite = SameSiteMode.Strict,
+                            HttpOnly = false,
+                            Secure = false,
+                            SameSite = SameSiteMode.Lax,
                             Expires = DateTime.UtcNow.AddDays(30)
                         });
 

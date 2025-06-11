@@ -1,7 +1,13 @@
 ﻿@model UserDetailsResponse
 
+@{
+    var message = TempData["Message"] as string;
+}
+
 <div class="card">
     <h2>Account Information</h2>
+    
+    <h3 class="error-text">@message</h3>
 
     <div class="field">
         <label>Username</label>

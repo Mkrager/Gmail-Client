@@ -1,12 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GmailClient.Ui.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GmailClient.Ui.Controllers
 {
     public class GoogleAuthController : Controller
     {
-        public IActionResult Index()
+        private readonly IGoogleOAuthDataService _googleOAuthDataService;
+
+        public GoogleAuthController(IGoogleOAuthDataService googleOAuthDataService)
         {
-            return View();
+            _googleOAuthDataService = googleOAuthDataService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login()
+       {
+            var result = await _googleOAuthDataService.GetGoogleSignInUrlAsync();
+            return Json(new { googleUrl = result});
         }
     }
 }

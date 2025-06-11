@@ -7,17 +7,25 @@ namespace GmailClient.Ui.Controllers
     public class DashboardController : Controller
     {
         private readonly IGmailDataService _gmailDataService;
+        private readonly IUserDataService _userDataService;
 
-        public DashboardController(IGmailDataService gmailDataService)
+        public DashboardController(IGmailDataService gmailDataService, IUserDataService userDataService)
         {
             _gmailDataService = gmailDataService;
+            _userDataService = userDataService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Main()
         {
-            var messages = await _gmailDataService.GetAllMessages();
-            return View(messages);
+            var user = await _userDataService.GetUserDetails();
+            if (user.IsGoogleConnected)
+            {
+                var messages = await _gmailDataService.GetAllMessages();
+                return View(messages);
+            }
+            TempData["Message"] = "For use dashboard you need connect google account";
+            return RedirectToAction("Index", "Account");
         }
 
         [HttpGet]
@@ -42,7 +50,7 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Send([FromBody] SendEmailRequest sendEmailRequest)
         {
             var result = await _gmailDataService.SendEmailAsync(sendEmailRequest);
-            return Json(new {});
+            return Json(new { });
         }
     }
 }

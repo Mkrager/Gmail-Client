@@ -1,7 +1,6 @@
 ﻿using GmailClient.Application.Contracts.Identity;
 using GmailClient.Identity.Models;
 using GmailClient.Identity.Services;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
