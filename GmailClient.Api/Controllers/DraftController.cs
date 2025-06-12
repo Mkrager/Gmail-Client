@@ -29,7 +29,11 @@ namespace GmailClient.Api.Controllers
         public async Task<ActionResult<GetDraftDetailsVm>> GetDraftsById(string draftId)
         {
             var userId = currentUserService.UserId;
-            var dtos = await mediator.Send(new GetDraftDetailsQuery() { UserId = userId, DraftId = draftId });
+            var dtos = await mediator.Send(new GetDraftDetailsQuery() 
+            { 
+                UserId = userId, 
+                DraftId = draftId 
+            });
             return Ok(dtos);
         }
 

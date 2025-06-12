@@ -55,7 +55,8 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Delete, $"https://localhost:7075/api/Draft/{draftId}");
+                var request = new HttpRequestMessage(HttpMethod.Delete, 
+                    $"https://localhost:7075/api/Draft/{draftId}");
 
                 string accessToken = _authenticationDataService.GetAccessToken();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -81,7 +82,8 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/Draft/{draftId}");
+                var request = new HttpRequestMessage(HttpMethod.Get, 
+                    $"https://localhost:7075/api/Draft/{draftId}");
 
                 string accessToken = _authenticationDataService.GetAccessToken();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

@@ -58,31 +58,21 @@ async function sendEmail(event) {
     const subject = document.getElementById('emailSubject').value;
     const body = sendEmailEditor.getData();
 
+    console.log(body);
+
+    if (!body) {
+        alert('Body requried');
+        return false;
+    }
+
     try {
-        const response = await fetch('/dashboard/send', {
+        await fetch('/dashboard/send', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ to, subject, body })
         });
 
-        const result = await response.json();
-
-        const errorContainer = document.querySelector("#sendEmailModal .error-text");
-
-        if (!result.success) {
-            if (errorContainer) {
-                errorContainer.textContent = "Error: " + result.error;
-                errorContainer.style.display = "block";
-            } else {
-                alert("Error: " + result.error);
-            }
-        } else {
-            if (errorContainer) {
-                errorContainer.style.display = "none";
-            }
-            closeSendEmailModal();
-        }
-
+        closeSendEmailModal();
     } catch (error) {
         alert("Unexpected error: " + error.message);
         console.error("Send email failed:", error);
@@ -154,6 +144,11 @@ async function saveDraft() {
     const subject = document.getElementById('emailSubject').value;
     const body = window.sendEmailEditor.getData();
 
+    if (!body) {
+        alert('Body requried');
+        return false;
+    }
+
     const draftData = {
         to: to,
         subject: subject,
@@ -161,13 +156,15 @@ async function saveDraft() {
     };
 
     try {
-        const response = await fetch('/Draft/SaveDraft', {
+        
+        await fetch('/Draft/SaveDraft', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(draftData)
         });
+
     } catch (error) {
         alert('Error saving draft: ' + error.message);
     }
@@ -198,6 +195,46 @@ function openSendDraftModal() {
     }
 }
 
+async function sendDraft(event) {
+    event.preventDefault();
+
+    const to = document.getElementById('draftEmailTo').value;
+    const subject = document.getElementById('draftEmailSubject').value;
+    const body = sendEmailEditor.getData();
+    const draftId = document.getElementById('draftId').value;
+
+    console.log(draftId);
+
+    console.log(body);
+
+    if (!body) {
+        alert('Body requried');
+        return false;
+    }
+
+    try {
+        const response = await fetch('/dashboard/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to, subject, body })
+        });
+
+        if (response.ok) {
+            await fetch(`/draft/deleteDraft?draftId=${encodeURIComponent(draftId)}`, {
+                method: 'DELETE'
+            });
+        }
+
+        closeSendDraftModal();
+    } catch (error) {
+        alert("Unexpected error: " + error.message);
+        console.error("Send email failed:", error);
+    }
+
+    return false;
+}
+
+
 function closeSendDraftModal() {
     document.getElementById('sendDraftModal').style.display = 'none';
 }
@@ -211,6 +248,11 @@ async function updateDraft() {
     const to = document.getElementById('draftEmailTo').value;
     const subject = document.getElementById('draftEmailSubject').value;
     const body = window.sendEmailEditor.getData();
+
+    if (!body) {
+        alert('Body requried');
+        return false;
+    }
 
     try {
         const response = await fetch('/Draft/UpdateDraft', {

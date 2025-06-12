@@ -65,7 +65,6 @@ namespace GmailClient.Ui.Controllers
 
             if (!result.IsSuccess)
             {
-
                 return Json(new { success = false, error = result.ErrorText });
             }
 

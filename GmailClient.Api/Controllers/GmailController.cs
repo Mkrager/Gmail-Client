@@ -17,7 +17,11 @@ namespace GmailClient.Api.Controllers
         public async Task<ActionResult<List<GetMessagesListDto>>> GetAllMessages(string nextPageToken = null)
         {
             var userId = currentUserService.UserId;
-            var dtos = await mediator.Send(new GetMessagesListQuery() { UserId = userId, NextPageToken = nextPageToken });
+            var dtos = await mediator.Send(new GetMessagesListQuery()
+            {
+                UserId = userId,
+                NextPageToken = nextPageToken
+            });
             return Ok(dtos);
         }
 
@@ -25,9 +29,14 @@ namespace GmailClient.Api.Controllers
         public async Task<ActionResult> SendEmail(SendEmailRequest sendEmailRequest)
         {
             var userId = currentUserService.UserId;
-            var dtos = await mediator.Send(new SendEmailCommand() { UserId = userId, Body = sendEmailRequest.Body, Subject = sendEmailRequest.Subject, To = sendEmailRequest.To });
+            var dtos = await mediator.Send(new SendEmailCommand()
+            {
+                UserId = userId,
+                Body = sendEmailRequest.Body,
+                Subject = sendEmailRequest.Subject,
+                To = sendEmailRequest.To
+            });
             return Ok(dtos);
         }
-
     }
 }

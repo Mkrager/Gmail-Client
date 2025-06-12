@@ -31,7 +31,7 @@ namespace GmailClient.Ui.Services
 
                 if (!string.IsNullOrEmpty(pageToken))
                 {
-                    url += $"?pageToken={pageToken}";
+                    url += $"?nextPageToken={Uri.EscapeDataString(pageToken)}";
                 }
 
                 var request = new HttpRequestMessage(HttpMethod.Get, url);

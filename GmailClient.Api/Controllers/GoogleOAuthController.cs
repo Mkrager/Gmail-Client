@@ -1,10 +1,6 @@
-﻿using GmailClient.Api.Services;
-using GmailClient.Application.Contracts;
-using GmailClient.Application.DTOs;
+﻿using GmailClient.Application.Contracts;
 using GmailClient.Application.Features.GoogleOAuth.Commands.GoogleOAuthCallback;
 using GmailClient.Application.Features.GoogleOAuth.Queries.GenerateGoogleOAuthUrl;
-using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
-using GmailClient.Application.Features.User.Commands.UpdateGoogleConnectionStatus;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -25,12 +25,21 @@ namespace GmailClient.Ui.Controllers
         {
             var result = await _draftDataService.UpdateDraftAsync(updateDraftRequest);
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
-                await _draftDataService.DeleteDraftAsync(updateDraftRequest.DraftId);
+
+                return Json(new { success = false, error = result.ErrorText });
             }
 
-            return RedirectToAction("Main", "Dashboard");
+            return Json(new { success = true });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteDraft([FromQuery] string draftId)
+        {
+            var result = await _draftDataService.DeleteDraftAsync(draftId);
+
+            return Json(new { success = true });
         }
 
 

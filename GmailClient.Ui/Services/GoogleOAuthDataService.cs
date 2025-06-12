@@ -26,7 +26,8 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7075/api/googleoauth/generate-google-state");
+                var request = new HttpRequestMessage(HttpMethod.Post, 
+                    "https://localhost:7075/api/googleoauth/generate-google-state");
 
                 string accessToken = _authenticationDataService.GetAccessToken();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

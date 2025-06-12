@@ -29,7 +29,8 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var authenticationRequest = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7075/api/authentication/authenticate")
+                var authenticationRequest = new HttpRequestMessage(HttpMethod.Post, 
+                    "https://localhost:7075/api/authentication/authenticate")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
                 };
@@ -106,7 +107,8 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var registerRequest = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7075/api/authentication/register")
+                var registerRequest = new HttpRequestMessage(HttpMethod.Post, 
+                    "https://localhost:7075/api/authentication/register")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
                 };
