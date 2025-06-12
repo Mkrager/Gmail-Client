@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.Contracts.Services;
-using GmailClient.Application.Features.Account.Commands.Registration;
 using GmailClient.Application.Features.Gmails.Commands.SendEmail;
 using GmailClient.Application.Profiles;
 using GmailClient.Tests.Mocks;

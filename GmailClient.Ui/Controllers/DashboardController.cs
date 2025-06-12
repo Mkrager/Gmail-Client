@@ -8,11 +8,16 @@ namespace GmailClient.Ui.Controllers
     {
         private readonly IGmailDataService _gmailDataService;
         private readonly IUserDataService _userDataService;
+        private readonly IDraftDataService _draftDataService;
 
-        public DashboardController(IGmailDataService gmailDataService, IUserDataService userDataService)
+        public DashboardController(
+            IGmailDataService gmailDataService, 
+            IUserDataService userDataService,
+            IDraftDataService draftDataService)
         {
             _gmailDataService = gmailDataService;
             _userDataService = userDataService;
+            _draftDataService = draftDataService;
         }
 
         [HttpGet]
@@ -60,6 +65,7 @@ namespace GmailClient.Ui.Controllers
 
             if (!result.IsSuccess)
             {
+
                 return Json(new { success = false, error = result.ErrorText });
             }
 

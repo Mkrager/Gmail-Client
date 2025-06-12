@@ -9,7 +9,7 @@ namespace GmailClient.Application.Contracts.Infrastructure
         Task CreateDraftAsync(string accessToken, string to, string subject, string body);
         Task UpdateDraftAsync(string accessToken, string draftId, string to, string subject, string body);
         Task DeleteDraftAsync(string accessToken, string draftId);
-        Task<List<DraftResponse>> GetDraftsAsync(string accessToken, string pageToken = null);
+        Task<List<DraftResponse>> GetDraftsAsync(string accessToken);
         Task<DraftResponse> GetDraftByIdAsync(string accessToken, string draftId);
     }
 }

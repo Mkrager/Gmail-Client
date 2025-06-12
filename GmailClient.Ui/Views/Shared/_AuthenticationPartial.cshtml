@@ -97,11 +97,5 @@
 </div>
 
 <script>
-     window.onload = function () {
-        const message = "@TempData["LoginErrorMessage"]";
-        if (message) {
-
-            document.querySelector('.wrapper')?.classList.add('active-popup');
-        }
-    }
+    window.loginErrorMessage = @Html.Raw(Json.Serialize(TempData["LoginErrorMessage"] ?? ""));
 </script>

@@ -190,13 +190,11 @@ namespace GmailClient.Infrastructure.Gmail
             await service.Users.Drafts.Delete("me", draftId).ExecuteAsync();
         }
 
-        public async Task<List<DraftResponse>> GetDraftsAsync(string accessToken, string pageToken = null)
+        public async Task<List<DraftResponse>> GetDraftsAsync(string accessToken)
         {
             using var service = CreateGmailService(accessToken);
 
             var request = service.Users.Drafts.List("me");
-            request.MaxResults = 10;
-            request.PageToken = pageToken;
 
             var response = await request.ExecuteAsync();
             var drafts = response.Drafts ?? new List<Draft>();

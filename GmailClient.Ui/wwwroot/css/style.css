@@ -534,6 +534,8 @@ th {
     color: #888;
 }
 
+
+
 .btn-email {
     padding: 10px 15px;
     background-color: green;
@@ -563,15 +565,23 @@ th {
     text-align: center;
 }
 
-.error-box {
-    width: 550px;
-    height: 200px;
-    background-color: white;
-    border-radius: 30px;
-    position: absolute;
-    text-align: center;
-    padding: 50px;
+.alert-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background-color: #8676ed;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    font-size: 1.1em;
     display: flex;
-    justify-content: center;
-    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
+
+    .alert-box .close-btn {
+        color: #ffffff;
+    }

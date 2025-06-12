@@ -1,12 +1,9 @@
 ﻿using GmailClient.Application.Contracts;
-using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Drafts.Commands.CreateDraft;
 using GmailClient.Application.Features.Drafts.Commands.DeleteDraft;
 using GmailClient.Application.Features.Drafts.Commands.UpdateDraft;
 using GmailClient.Application.Features.Drafts.Queries.GetDraftDetails;
 using GmailClient.Application.Features.Drafts.Queries.GetDraftsList;
-using GmailClient.Application.Features.Gmails.Commands.SendEmail;
-using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

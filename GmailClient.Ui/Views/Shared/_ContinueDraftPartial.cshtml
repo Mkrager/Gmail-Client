@@ -1,0 +1,10 @@
+﻿@model DraftResponse
+
+<div class="alert-box" id="alert-box">
+    <span class="close-btn" onclick="closeAllertBox()">&times;</span>
+    You have draft. Want to continue?
+    <button class="btn btn-primary ml-2"
+            onclick='openSendEmailModalWithDraft(@Html.Raw(Json.Serialize(Model)))'>
+        Continue
+    </button>
+</div>

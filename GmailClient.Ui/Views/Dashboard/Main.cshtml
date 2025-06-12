@@ -4,6 +4,7 @@
 
 @{
     var message = TempData["Message"] as string;
+    var lastDraft = ViewBag.LastDraft as DraftResponse;
 }
 
 <div class="sidebar">
@@ -27,7 +28,7 @@
         <tbody>
             @foreach (var letters in Model.Messages)
             {
-                <tr>                   
+                <tr>
                     <td>@letters.Subject</td>
                     <td>@letters.From</td>
                     <td>@DateHelper.FormatEmailDate(letters.Date)</td>
@@ -83,7 +84,49 @@
             <label for="sendEmailContent">Body:</label><br />
             <textarea id="sendEmailContent" name="sendEmailContent"></textarea>
 
+            <button class="btn-email" type="button" onclick="saveDraft()">Save Draft</button>
             <button class="btn-email" type="submit">Send</button>
         </form>
     </div>
 </div>
+
+<div class="modal" id="sendDraftModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSendDraftModal()">&times;</span>
+        <h3>Send Email</h3>
+        @if (message != null)
+        {
+            <h4 class="error-text" style="display: block;">Error: @message</h4>
+        }
+        else
+        {
+            <h4 class="error-text" style="display: none;"></h4>
+        }
+        <form id="sendDraftForm" onsubmit="return sendDraft(event)">
+            <div class="form-group">
+                <label for="emailTo">To:</label><br />
+                <input type="email" id="draftEmailTo" name="emailTo" required />
+            </div>
+
+            <input type="hidden" id="draftId" name="draftId" />
+
+            <div class="form-group">
+                <label for="emailSubject">Subject:</label><br />
+                <input type="text" id="draftEmailSubject" name="emailSubject" required />
+            </div>
+
+            <label for="sendDraftContent">Body:</label><br />
+            <textarea id="sendDraftContent" name="sendEmailContent"></textarea>
+
+            <button class="btn-email" type="button" onclick="updateDraft()">Save Draft</button>
+            <button class="btn-email" type="submit">Send</button>
+        </form>
+    </div>
+</div>
+
+
+<div id="draftReminder"></div>
+
+@section Scripts {
+    <script src="~/js/dashboard.js"></script>
+}

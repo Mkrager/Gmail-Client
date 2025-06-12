@@ -30,7 +30,9 @@
     <partial name="_AuthenticationPartial" model="new AuthenticationViewModel()" />
 
     @RenderBody()
+    @RenderSection("Scripts", required: false)
 
-    <script src="~/js/script.js"></script>
+    <script src="~/js/authentication.js"></script>
+    <script src="~/js/errorBox.js"></script>
 </body>
 </html>

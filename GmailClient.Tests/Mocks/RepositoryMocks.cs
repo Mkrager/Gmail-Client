@@ -8,6 +8,7 @@ using GmailClient.Application.Features.User.Commands.UpdateGoogleConnectionStatu
 using GmailClient.Domain.Entities;
 using MediatR;
 using Moq;
+using System.Net;
 
 namespace GmailClient.Tests.Mocks
 {
@@ -100,6 +101,51 @@ namespace GmailClient.Tests.Mocks
                 }
             };
 
+            var drafts = new List<DraftResponse>
+            {
+                new DraftResponse()
+                {
+                    DraftId = "draft1",
+                    MessageId = "msg1",
+                    From = "alice@example.com",
+                    To = "bob@example.com",
+                    Subject = "Meeting Reminder",
+                    Date = "2025-06-12T10:00:00Z",
+                    Body = "Body1"
+                },
+                new DraftResponse()
+                {
+                    DraftId = "draft2",
+                    MessageId = "msg2",
+                    From = "carol@example.com",
+                    To = "dave@example.com",
+                    Subject = "Project Update",
+                    Date = "2025-06-11T14:30:00Z",
+                    Body = "Body2"
+                },
+                new DraftResponse()
+                {
+                    DraftId = "draft3",
+                    MessageId = "msg3",
+                    From = "eve@example.com",
+                    To = "frank@example.com",
+                    Subject = "Invitation",
+                    Date = "2025-06-10T09:15:00Z",
+                    Body = "Body3"
+                },
+                new DraftResponse()
+                {
+                    DraftId = "draft4",
+                    MessageId = "msg4",
+                    From = "grace@example.com",
+                    To = "heidi@example.com",
+                    Subject = "Follow-up",
+                    Date = "2025-06-09T16:45:00Z",
+                    Body = "Body4"
+                }
+            };
+
+
             mockService.Setup(service => service.GetAllMessagesAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new GmailMessageResponse
                 {
@@ -109,6 +155,22 @@ namespace GmailClient.Tests.Mocks
 
             mockService.Setup(service => service.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
+
+            mockService.Setup(service => service.GetDraftsAsync(It.IsAny<string>()))
+                .ReturnsAsync(drafts);
+
+            mockService.Setup(service => service.GetDraftByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync((string userId, string draftId) => drafts.FirstOrDefault(a => a.DraftId == draftId));
+
+            mockService.Setup(service => service.CreateDraftAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
+            mockService.Setup(service => service.UpdateDraftAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
+            mockService.Setup(service => service.DeleteDraftAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
 
             return mockService;
         }

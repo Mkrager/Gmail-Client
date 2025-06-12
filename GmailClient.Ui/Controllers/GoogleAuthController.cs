@@ -16,7 +16,7 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Login()
        {
             var result = await _googleOAuthDataService.GetGoogleSignInUrlAsync();
-            return Json(new { googleUrl = result});
+            return Json(new { googleUrl = result.Data});
         }
     }
 }

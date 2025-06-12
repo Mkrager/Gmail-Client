@@ -1,25 +1,4 @@
-﻿const wrapper = document.querySelector('.wrapper');
-const loginlink = document.querySelector('.login-link');
-const registerlink = document.querySelector('.register-link');
-const btnPopup = document.querySelector('.btnLogin-popup');
-const iconClose = document.querySelector('.icon-close');
-
-registerlink.addEventListener('click', () => wrapper.classList.add('active'));
-loginlink.addEventListener('click', () => wrapper.classList.remove('active'));
-btnPopup.addEventListener('click', () => wrapper.classList.add('active-popup'));
-iconClose.addEventListener('click', () => wrapper.classList.remove('active-popup'));
-
-async function signInWithGoogle() {
-    const res = await fetch("/GoogleAuth/Login", {
-        method: "POST",
-    });
-
-    const { googleUrl } = await res.json();
-    window.open(googleUrl, "GoogleLogin", "width=500,height=600");
-}
-
-
-function escapeHtml(str) {
+﻿function escapeHtml(str) {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
@@ -170,13 +149,102 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-window.addEventListener('DOMContentLoaded', (event) => {
-    const errorBox = document.getElementById('errorBox');
-    if (errorBox) {
-        setTimeout(() => {
-            errorBox.style.transition = "opacity 0.5s ease";
-            errorBox.style.opacity = "0";
-            setTimeout(() => errorBox.remove(), 500);
-        }, 3000);
+async function saveDraft() {
+    const to = document.getElementById('emailTo').value;
+    const subject = document.getElementById('emailSubject').value;
+    const body = window.sendEmailEditor.getData();
+
+    const draftData = {
+        to: to,
+        subject: subject,
+        body: body
+    };
+
+    try {
+        const response = await fetch('/Draft/SaveDraft', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(draftData)
+        });
+    } catch (error) {
+        alert('Error saving draft: ' + error.message);
+    }
+}
+
+function openSendEmailModalWithDraft(draft) {
+    document.getElementById('draftId').value = draft.draftId;
+    document.getElementById('draftReminder').style.display = 'none';
+    document.getElementById('draftEmailTo').value = draft.to || '';
+    document.getElementById('draftEmailSubject').value = draft.subject || '';
+    document.getElementById('sendDraftContent').value = draft.body || '';
+
+    openSendDraftModal();
+}
+
+function openSendDraftModal() {
+    document.getElementById("sendDraftModal").style.display = "flex";
+
+    if (!window.sendEmailEditor) {
+        ClassicEditor
+            .create(document.querySelector("#sendDraftContent"))
+            .then(editor => {
+                window.sendEmailEditor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}
+
+function closeSendDraftModal() {
+    document.getElementById('sendDraftModal').style.display = 'none';
+}
+
+function closeAllertBox() {
+    document.getElementById('alert-box').style.display = 'none';
+}
+
+async function updateDraft() {
+    const draftId = document.getElementById('draftId').value;
+    const to = document.getElementById('draftEmailTo').value;
+    const subject = document.getElementById('draftEmailSubject').value;
+    const body = window.sendEmailEditor.getData();
+
+    try {
+        const response = await fetch('/Draft/UpdateDraft', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ to, subject, body, draftId })
+        });
+
+
+    } catch (error) {
+        alert('Error saving draft: ' + error.message);
+    }
+}
+
+
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/Draft/CheckLastDraft');
+        if (response.ok) {
+            const html = await response.text();
+            if (html) {
+                const draftDiv = document.getElementById('draftReminder');
+                if (draftDiv) {
+                    draftDiv.innerHTML = html;
+                } else {
+                    console.warn('Element #draftReminder not found.');
+                }
+            }
+        } else {
+            console.error('Draft fetch failed:', response.status);
+        }
+    } catch (error) {
+        console.error('Error loading draft reminder:', error);
     }
 });
