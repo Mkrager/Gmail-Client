@@ -22,7 +22,7 @@ namespace GmailClient.Api.Controllers
         }
 
         [HttpPost(Name = "SendEmail")]
-        public async Task<ActionResult> SenadEmail(SendEmailRequest sendEmailRequest)
+        public async Task<ActionResult> SendEmail(SendEmailRequest sendEmailRequest)
         {
             var userId = currentUserService.UserId;
             var dtos = await mediator.Send(new SendEmailCommand() { UserId = userId, Body = sendEmailRequest.Body, Subject = sendEmailRequest.Subject, To = sendEmailRequest.To });

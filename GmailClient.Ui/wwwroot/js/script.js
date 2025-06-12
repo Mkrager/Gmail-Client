@@ -72,31 +72,42 @@ function closeSendEmailModal() {
     document.getElementById('sendEmailModal').style.display = 'none';
 }
 
-function sendEmail(event) {
+async function sendEmail(event) {
     event.preventDefault();
 
     const to = document.getElementById('emailTo').value;
     const subject = document.getElementById('emailSubject').value;
     const body = sendEmailEditor.getData();
 
-    fetch('/dashboard/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to, subject, body })
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('Success');
-                closeSendEmailModal();
-                document.getElementById('sendEmailForm').reset();
-                sendEmailEditor.setData('');
-            } else {
-                alert('Error');
-            }
-        })
-        .catch(error => {
-            alert('Error');
+    try {
+        const response = await fetch('/dashboard/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to, subject, body })
         });
+
+        const result = await response.json();
+
+        const errorContainer = document.querySelector("#sendEmailModal .error-text");
+
+        if (!result.success) {
+            if (errorContainer) {
+                errorContainer.textContent = "Error: " + result.error;
+                errorContainer.style.display = "block";
+            } else {
+                alert("Error: " + result.error);
+            }
+        } else {
+            if (errorContainer) {
+                errorContainer.style.display = "none";
+            }
+            closeSendEmailModal();
+        }
+
+    } catch (error) {
+        alert("Unexpected error: " + error.message);
+        console.error("Send email failed:", error);
+    }
 
     return false;
 }

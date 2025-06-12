@@ -20,7 +20,7 @@ namespace GmailClient.Ui.Controllers
         {
             var user = await _userDataService.GetUserDetails();
 
-            if(user.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if(!user.IsSuccess)
             {
                 TempData["Message"] = "Login to account first";
                 return RedirectToAction("Index", "Home");
@@ -57,7 +57,13 @@ namespace GmailClient.Ui.Controllers
         public async Task<IActionResult> Send([FromBody] SendEmailRequest sendEmailRequest)
         {
             var result = await _gmailDataService.SendEmailAsync(sendEmailRequest);
-            return Json(new { });
+
+            if (!result.IsSuccess)
+            {
+                return Json(new { success = false, error = result.ErrorText });
+            }
+
+            return Json(new { success = true });
         }
     }
 }

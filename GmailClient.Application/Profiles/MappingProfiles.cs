@@ -2,6 +2,8 @@
 using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Account.Commands.Registration;
 using GmailClient.Application.Features.Account.Queries.Authentication;
+using GmailClient.Application.Features.Drafts.Queries.GetDraftDetails;
+using GmailClient.Application.Features.Drafts.Queries.GetDraftsList;
 using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using GmailClient.Application.Features.Tokens.Commands.SaveTokens;
 using GmailClient.Application.Features.User.Queries;
@@ -25,6 +27,10 @@ namespace GmailClient.Application.Profiles
 
             CreateMap<UserDetailsResponse, UserDetailsVm>().ReverseMap()
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
+
+            CreateMap<GetDraftsListVm, DraftResponse>().ReverseMap();
+
+            CreateMap<GetDraftDetailsVm, DraftResponse>().ReverseMap();
         }
     }
 }

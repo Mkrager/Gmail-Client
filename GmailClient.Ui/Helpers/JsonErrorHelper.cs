@@ -4,28 +4,38 @@ namespace GmailClient.Ui.Helpers
 {
     public static class JsonErrorHelper
     {
-        public static string? GetErrorMessage(string json)
+        public static string GetErrorMessage(string json)
         {
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
 
-                if (doc.RootElement.TryGetProperty("error", out var errorProp))
+                if (root.ValueKind == JsonValueKind.Array)
+                {
+                    var messages = root.EnumerateArray()
+                        .Where(e => e.ValueKind == JsonValueKind.String)
+                        .Select(e => e.GetString())
+                        .Where(msg => !string.IsNullOrWhiteSpace(msg))
+                        .ToList();
+
+                    return messages.FirstOrDefault();
+                }
+
+                if (root.TryGetProperty("error", out var errorProp))
                 {
                     return errorProp.ToString();
                 }
-                else if (doc.RootElement.TryGetProperty("message", out var messageProp))
+                else if (root.TryGetProperty("message", out var messageProp))
                 {
                     return messageProp.GetString();
                 }
-                else if (doc.RootElement.TryGetProperty("detail", out var detailProp))
+                else if (root.TryGetProperty("detail", out var detailProp))
                 {
                     return detailProp.GetString();
                 }
-                else
-                {
-                    return json;
-                }
+
+                return json;
             }
             catch
             {

@@ -8,15 +8,15 @@ namespace GmailClient.Application.Features.Gmails.Commands.SendEmail
         {
             RuleFor(r => r.Body)
                 .NotEmpty()
-                .NotEmpty().WithMessage("{PropertyName} is required.");
+                .NotEmpty().WithMessage("Body is required.");
 
             RuleFor(r => r.Subject)
                 .NotEmpty()
-                .NotEmpty().WithMessage("{PropertyName} is required.");
+                .NotEmpty().WithMessage("Subject is required.");
 
             RuleFor(r => r.To)
                 .NotEmpty()
-                .NotEmpty().WithMessage("{PropertyName} is required.");
+                .NotEmpty().WithMessage("To is required.");
             RuleFor(r => r.UserId)
                 .NotEmpty()
                 .NotEmpty().WithMessage("User not found");

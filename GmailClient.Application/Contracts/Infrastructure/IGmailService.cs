@@ -6,6 +6,11 @@ namespace GmailClient.Application.Contracts.Infrastructure
     {
         Task<GmailMessageResponse> GetAllMessagesAsync(string accessToken, string pageToken = null);
         Task SendEmailAsync(string accessToken, string to, string subject, string body);
+        Task CreateDraftAsync(string accessToken, string to, string subject, string body);
+        Task UpdateDraftAsync(string accessToken, string draftId, string to, string subject, string body);
+        Task DeleteDraftAsync(string accessToken, string draftId);
+        Task<List<DraftResponse>> GetDraftsAsync(string accessToken, string pageToken = null);
+        Task<DraftResponse> GetDraftByIdAsync(string accessToken, string draftId);
     }
 }
     

@@ -19,7 +19,7 @@ namespace GmailClient.Ui.Controllers
         {
             var user = await _userDataService.GetUserDetails();
 
-            if (user.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (!user.IsSuccess)
             {
                 TempData["Message"] = "Login to account first";
                 return RedirectToAction("Index", "Home");

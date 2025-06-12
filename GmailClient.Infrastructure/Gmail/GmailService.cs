@@ -122,5 +122,151 @@ namespace GmailClient.Infrastructure.Gmail
 
             await service.Users.Messages.Send(message, "me").ExecuteAsync();
         }
+
+        public async Task CreateDraftAsync(string accessToken, string to, string subject, string body)
+        {
+            using var service = CreateGmailService(accessToken);
+
+            var profile = await service.Users.GetProfile("me").ExecuteAsync();
+            string userEmail = profile.EmailAddress;
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(userEmail),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = false
+            };
+            mailMessage.To.Add(to.Trim());
+
+            var mimeMessage = MimeKit.MimeMessage.CreateFromMailMessage(mailMessage);
+
+            using var stream = new MemoryStream();
+            await mimeMessage.WriteToAsync(stream);
+
+            var rawMessage = Base64UrlEncode(stream.ToArray());
+            var message = new Message { Raw = rawMessage };
+            var draft = new Draft { Message = message };
+
+            await service.Users.Drafts.Create(draft, "me").ExecuteAsync();
+        }
+
+        public async Task UpdateDraftAsync(string accessToken, string draftId, string to, string subject, string body)
+        {
+            using var service = CreateGmailService(accessToken);
+
+            var profile = await service.Users.GetProfile("me").ExecuteAsync();
+            string userEmail = profile.EmailAddress;
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(userEmail),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = false
+            };
+            mailMessage.To.Add(to.Trim());
+
+            var mimeMessage = MimeKit.MimeMessage.CreateFromMailMessage(mailMessage);
+
+            using var stream = new MemoryStream();
+            await mimeMessage.WriteToAsync(stream);
+
+            var rawMessage = Base64UrlEncode(stream.ToArray());
+            var message = new Message { Raw = rawMessage };
+
+            var draft = new Draft
+            {
+                Id = draftId,
+                Message = message
+            };
+
+            await service.Users.Drafts.Update(draft, "me", draftId).ExecuteAsync();
+        }
+        public async Task DeleteDraftAsync(string accessToken, string draftId)
+        {
+            using var service = CreateGmailService(accessToken);
+
+            await service.Users.Drafts.Delete("me", draftId).ExecuteAsync();
+        }
+
+        public async Task<List<DraftResponse>> GetDraftsAsync(string accessToken, string pageToken = null)
+        {
+            using var service = CreateGmailService(accessToken);
+
+            var request = service.Users.Drafts.List("me");
+            request.MaxResults = 10;
+            request.PageToken = pageToken;
+
+            var response = await request.ExecuteAsync();
+            var drafts = response.Drafts ?? new List<Draft>();
+            var result = new List<DraftResponse>();
+
+            foreach (var draft in drafts)
+            {
+                var fullDraft = await service.Users.Drafts.Get("me", draft.Id).ExecuteAsync();
+                var message = fullDraft.Message;
+                var headers = message.Payload.Headers;
+
+                string GetHeader(string name) => headers.FirstOrDefault(h => h.Name == name)?.Value ?? string.Empty;
+
+                string GetBody()
+                {
+                    if (message.Payload.Body?.Data != null)
+                        return Base64UrlDecode(message.Payload.Body.Data);
+
+                    if (message.Payload.Parts != null)
+                        return GetBodyFromParts(message.Payload.Parts);
+
+                    return string.Empty;
+                }
+
+                result.Add(new DraftResponse
+                {
+                    DraftId = fullDraft.Id,
+                    MessageId = message.Id,
+                    From = GetHeader("From"),
+                    To = GetHeader("To"),
+                    Subject = GetHeader("Subject"),
+                    Date = GetHeader("Date"),
+                    Body = GetBody()
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<DraftResponse> GetDraftByIdAsync(string accessToken, string draftId)
+        {
+            using var service = CreateGmailService(accessToken);
+
+            var draft = await service.Users.Drafts.Get("me", draftId).ExecuteAsync();
+            var message = draft.Message;
+            var headers = message.Payload.Headers;
+
+            string GetHeader(string name) => headers.FirstOrDefault(h => h.Name == name)?.Value ?? string.Empty;
+
+            string GetBody()
+            {
+                if (message.Payload.Body?.Data != null)
+                    return Base64UrlDecode(message.Payload.Body.Data);
+
+                if (message.Payload.Parts != null)
+                    return GetBodyFromParts(message.Payload.Parts);
+
+                return string.Empty;
+            }
+
+            return new DraftResponse
+            {
+                DraftId = draft.Id,
+                MessageId = message.Id,
+                From = GetHeader("From"),
+                To = GetHeader("To"),
+                Subject = GetHeader("Subject"),
+                Date = GetHeader("Date"),
+                Body = GetBody()
+            };
+        }
     }
 }

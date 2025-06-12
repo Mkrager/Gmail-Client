@@ -19,9 +19,9 @@ namespace GmailClient.Ui.Controllers
         {
             var result = await _authenticationService.Login(request.LoginRequest);
 
-            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (!result.IsSuccess)
             {
-                TempData["LoginErrorMessage"] = HandleErrors.HandleResponse<bool>(result);
+                TempData["LoginErrorMessage"] = result.ErrorText;
             }
 
             return RedirectToAction("Index", "Home");
@@ -32,9 +32,9 @@ namespace GmailClient.Ui.Controllers
         {
             var result = await _authenticationService.Register(request.RegistrationRequest);
 
-            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (!result.IsSuccess)
             {
-                TempData["LoginErrorMessage"] = HandleErrors.HandleResponse<bool>(result);
+                TempData["LoginErrorMessage"] = result.ErrorText;
 
             }
 
