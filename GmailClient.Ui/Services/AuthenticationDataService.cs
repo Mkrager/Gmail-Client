@@ -6,6 +6,7 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
 using GmailClient.Ui.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace GmailClient.Ui.Services
 {
@@ -14,8 +15,9 @@ namespace GmailClient.Ui.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly string _baseUrl;
 
-        public AuthenticationDataService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient)
+        public AuthenticationDataService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient, IOptions<ApiSettings> apiSettings)
         {
             _httpClient = httpClient;
             _httpContextAccessor = httpContextAccessor;
@@ -23,6 +25,7 @@ namespace GmailClient.Ui.Services
             {
                 PropertyNameCaseInsensitive = true
             };
+            _baseUrl = apiSettings.Value.BaseUrl;
         }
 
         public async Task<ApiResponse<bool>> Login(LoginRequest request)
@@ -30,7 +33,7 @@ namespace GmailClient.Ui.Services
             try
             {
                 var authenticationRequest = new HttpRequestMessage(HttpMethod.Post, 
-                    "https://localhost:7075/api/authentication/authenticate")
+                    $"{_baseUrl}/api/Draft//api/authentication/authenticate")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
                 };
@@ -107,8 +110,8 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var registerRequest = new HttpRequestMessage(HttpMethod.Post, 
-                    "https://localhost:7075/api/authentication/register")
+                var registerRequest = new HttpRequestMessage(HttpMethod.Post,
+                    $"{_baseUrl}/api/authentication/register")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
                 };

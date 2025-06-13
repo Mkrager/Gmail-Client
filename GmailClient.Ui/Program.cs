@@ -21,6 +21,8 @@ builder.Services.AddScoped<IGmailDataService, GmailDataService>();
 builder.Services.AddScoped<IGoogleOAuthDataService, GoogleOAuthDataService>();
 builder.Services.AddScoped<IDraftDataService, DraftDataService>();
 
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

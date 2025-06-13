@@ -1,6 +1,7 @@
 ﻿using GmailClient.Ui.Contracts;
 using GmailClient.Ui.Helpers;
 using GmailClient.Ui.ViewModels;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -12,8 +13,12 @@ namespace GmailClient.Ui.Services
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly IAuthenticationDataService _authenticationDataService;
+        private readonly string _baseUrl;
 
-        public DraftDataService(HttpClient httpClient, IAuthenticationDataService authenticationDataService)
+        public DraftDataService(
+            HttpClient httpClient, 
+            IAuthenticationDataService authenticationDataService,
+            IOptions<ApiSettings> apiSettings)
         {
             _httpClient = httpClient;
             _jsonOptions = new JsonSerializerOptions
@@ -21,13 +26,14 @@ namespace GmailClient.Ui.Services
                 PropertyNameCaseInsensitive = true
             };
             _authenticationDataService = authenticationDataService;
+            _baseUrl = apiSettings.Value.BaseUrl;
         }
 
         public async Task<ApiResponse<bool>> CreateDraftAsync(CreateDraftRequest createDraftRequest)
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:7075/api/Draft")
+                var request = new HttpRequestMessage(HttpMethod.Post, $"${_baseUrl}/api/Draft")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(createDraftRequest), Encoding.UTF8, "application/json")
                 };
@@ -56,7 +62,7 @@ namespace GmailClient.Ui.Services
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Delete, 
-                    $"https://localhost:7075/api/Draft/{draftId}");
+                    $"{_baseUrl}/api/Draft/{draftId}");
 
                 string accessToken = _authenticationDataService.GetAccessToken();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -83,7 +89,7 @@ namespace GmailClient.Ui.Services
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, 
-                    $"https://localhost:7075/api/Draft/{draftId}");
+                    $"{_baseUrl}/api/Draft/{draftId}");
 
                 string accessToken = _authenticationDataService.GetAccessToken();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -111,7 +117,7 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7075/api/Draft");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/api/Draft");
 
                 string accessToken = _authenticationDataService.GetAccessToken();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -139,7 +145,7 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:7075/api/Draft")
+                var request = new HttpRequestMessage(HttpMethod.Put, $"{_baseUrl}/api/Draft")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(updateDraftRequest), Encoding.UTF8, "application/json")
                 };
