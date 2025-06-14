@@ -36,9 +36,9 @@ namespace GmailClient.Application.Features.GoogleOAuth.Commands.oogleOAuthCallba
 
             await _mediator.Send(new SaveTokensCommand
             {
-                AccessToken = tokenInfo.Access_token,
-                ExpiresAt = tokenInfo.Expires_in,
-                RefreshToken = tokenInfo.Refresh_token,
+                AccessToken = tokenInfo.AccessToken,
+                ExpiresAt = tokenInfo.ExpiresIn,
+                RefreshToken = tokenInfo.RefreshToken,
                 UserId = userId
             });
 

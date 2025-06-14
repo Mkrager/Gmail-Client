@@ -1,11 +1,22 @@
-﻿namespace GmailClient.Application.DTOs
+﻿using System.Text.Json.Serialization;
+
+namespace GmailClient.Application.DTOs
 {
     public class GoogleTokenResponse
     {
-        public string Access_token { get; set; } = string.Empty;
-        public string Id_token { get; set; } = string.Empty;
-        public string Refresh_token { get; set; } = string.Empty;
-        public int Expires_in { get; set; }
-        public string Token_type { get; set; } = string.Empty;
+        [JsonPropertyName("access_token")]
+        public string AccessToken { get; set; } = string.Empty;
+
+        [JsonPropertyName("id_token")]
+        public string IdToken { get; set; } = string.Empty;
+
+        [JsonPropertyName("refresh_token")]
+        public string RefreshToken { get; set; } = string.Empty;
+
+        [JsonPropertyName("expires_in")]
+        public int ExpiresIn { get; set; }
+
+        [JsonPropertyName("token_type")]
+        public string TokenType { get; set; } = string.Empty;
     }
 }

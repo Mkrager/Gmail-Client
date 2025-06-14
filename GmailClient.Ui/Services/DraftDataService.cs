@@ -33,7 +33,7 @@ namespace GmailClient.Ui.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, $"${_baseUrl}/api/Draft")
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/Draft")
                 {
                     Content = new StringContent(JsonSerializer.Serialize(createDraftRequest), Encoding.UTF8, "application/json")
                 };
