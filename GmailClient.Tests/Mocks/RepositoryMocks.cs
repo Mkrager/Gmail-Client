@@ -249,11 +249,11 @@ namespace GmailClient.Tests.Mocks
             mockService.Setup(service => service.ExchangeCodeForTokensAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new GoogleTokenResponse
                 {
-                    Refresh_token = "someRefreshTokens",
-                    Access_token = "someAccessToken",
-                    Expires_in = 3000,
-                    Id_token = "someId",
-                    Token_type = "someTokenType"
+                    RefreshToken = "someRefreshTokens",
+                    AccessToken = "someAccessToken",
+                    ExpiresIn = 3000,
+                    IdToken = "someId",
+                    TokenType = "someTokenType"
                 });
 
             mockService.Setup(service => service.GenerateGoogleAuthorizationUrl(It.IsAny<string>()))
