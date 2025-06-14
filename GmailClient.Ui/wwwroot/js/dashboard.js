@@ -29,9 +29,11 @@ function openModal(body) {
         document.getElementById('emailContent').value = body;
     }
 }
+
 function closeModal() {
     document.getElementById('emailModal').style.display = 'none';
 }
+
 function openSendEmailModal() {
     document.getElementById("sendEmailModal").style.display = "flex";
 

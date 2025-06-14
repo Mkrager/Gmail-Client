@@ -15,30 +15,29 @@ namespace GmailClient.Ui.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(AuthenticationViewModel request)
+        public async Task<IActionResult> Login([FromBody] AuthenticationViewModel request)
         {
             var result = await _authenticationService.Login(request.LoginRequest);
 
             if (!result.IsSuccess)
             {
-                TempData["LoginErrorMessage"] = result.ErrorText;
+                return Json(new { success = false, error = result.ErrorText });
             }
 
-            return RedirectToAction("Index", "Home");
+            return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(AuthenticationViewModel request)
+        public async Task<IActionResult> Register([FromBody] AuthenticationViewModel request)
         {
             var result = await _authenticationService.Register(request.RegistrationRequest);
 
             if (!result.IsSuccess)
             {
-                TempData["LoginErrorMessage"] = result.ErrorText;
-
+                return Json(new { success = false, error = result.ErrorText });
             }
 
-            return RedirectToAction("Index", "Home");
+            return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-window.addEventListener('DOMContentLoaded', (event) => {
+﻿window.addEventListener('DOMContentLoaded', (event) => {
     const errorBox = document.getElementById('errorBox');
     if (errorBox) {
         setTimeout(() => {
@@ -9,5 +8,3 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }, 3000);
     }
 });
-
-

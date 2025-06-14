@@ -1,13 +1,9 @@
 ﻿@model UserDetailsResponse
 
-@{
-    var message = TempData["Message"] as string;
-}
-
 <div class="card">
     <h2>Account Information</h2>
     
-    <h3 class="error-text">@message</h3>
+    <h3 class="error-text">@Model.Message</h3>
 
     <div class="field">
         <label>Username</label>
@@ -25,7 +21,7 @@
             <button class="btn btn-google" onclick="signInWithGoogle()">Connect with Google</button>
         }
 
-        <a class="btn btn-logout" asp-controller="Account", asp-action="Logout">Logout</a>
+        <a class="btn btn-logout" asp-controller="Account" asp-action="Logout">Logout</a>
     </div>
 </div>
 

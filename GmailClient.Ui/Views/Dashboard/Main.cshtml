@@ -2,11 +2,6 @@
 @using System.Text.Json
 @using GmailClient.Ui.Helpers
 
-@{
-    var message = TempData["Message"] as string;
-    var lastDraft = ViewBag.LastDraft as DraftResponse;
-}
-
 <div class="sidebar">
     <h2>Menu</h2>
     <button>Main</button>
@@ -62,14 +57,7 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeSendEmailModal()">&times;</span>
         <h3>Send Email</h3>
-        @if (message != null)
-        {
-            <h4 class="error-text" style="display: block;">Error: @message</h4>
-        }
-        else
-        {
-            <h4 class="error-text" style="display: none;"></h4>
-        }
+
         <form id="sendEmailForm" onsubmit="return sendEmail(event)">
             <div class="form-group">
                 <label for="emailTo">To:</label><br />
@@ -94,14 +82,7 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeSendDraftModal()">&times;</span>
         <h3>Send Email</h3>
-        @if (message != null)
-        {
-            <h4 class="error-text" style="display: block;">Error: @message</h4>
-        }
-        else
-        {
-            <h4 class="error-text" style="display: none;"></h4>
-        }
+
         <form id="sendDraftForm" onsubmit="return sendDraft(event)">
             <div class="form-group">
                 <label for="emailTo">To:</label><br />

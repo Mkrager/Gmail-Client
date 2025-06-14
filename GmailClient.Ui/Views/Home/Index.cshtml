@@ -1,11 +1,9 @@
-﻿@{
-    var message = TempData["Message"] as string;
-}
+﻿@model HomeErrorViewModel
 
-@if (message != null)
+@if (Model.Message != null)
 {
     <div class="alert-box" id="errorBox">
-        <h1>Error: @message</h1>
+        <h1>Error: @Model.Message</h1>
     </div>
 }
 

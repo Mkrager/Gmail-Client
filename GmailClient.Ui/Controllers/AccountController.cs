@@ -19,6 +19,8 @@ namespace GmailClient.Ui.Controllers
         {
             var user = await _userDataService.GetUserDetails();
 
+            user.Data.Message = TempData["Message"] as string;
+
             if (!user.IsSuccess)
             {
                 TempData["Message"] = "Login to account first";
