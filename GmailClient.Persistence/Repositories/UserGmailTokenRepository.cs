@@ -9,6 +9,13 @@ namespace GmailClient.Persistence.Repositories
         public UserGmailTokenRepository(GmailClientDbContext dbContext) : base(dbContext)
         {
         }
+
+        public async Task<UserGmailToken?> GetByUserIdAsync(string userId)
+        {
+            return await _dbContext.UserGmailTokens
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
         public async Task UpdateAccessTokenAsync(string userId, string newAccessToken, DateTime expiresAt)
         {
             var user = await _dbContext.UserGmailTokens.FirstOrDefaultAsync(u => u.UserId == userId); 
