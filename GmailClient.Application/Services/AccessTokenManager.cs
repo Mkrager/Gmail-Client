@@ -1,6 +1,8 @@
 ﻿using GmailClient.Application.Contracts.Infrastructure;
 using GmailClient.Application.Contracts.Persistance;
 using GmailClient.Application.Contracts.Services;
+using GmailClient.Application.Exceptions;
+using GmailClient.Domain.Entities;
 
 namespace GmailClient.Application.Services
 {
@@ -33,7 +35,12 @@ namespace GmailClient.Application.Services
                 if (newToken.AccessToken == null)
                     throw new Exception("Failed to refresh access token");
 
-                await _userGmailTokenRepository.UpdateAccessTokenAsync(userId, newToken.AccessToken, newToken.ExpiresAt);
+                var user = await _userGmailTokenRepository.GetByUserIdAsync(userId);
+
+                if (user == null)
+                    throw new NotFoundException(nameof(UserGmailToken), userId);
+
+                await _userGmailTokenRepository.UpdateAccessTokenAsync(user, newToken.AccessToken, newToken.ExpiresAt);
 
                 return newToken.AccessToken;
             }

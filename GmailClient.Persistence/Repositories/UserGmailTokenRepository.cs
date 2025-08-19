@@ -16,13 +16,8 @@ namespace GmailClient.Persistence.Repositories
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
-        public async Task UpdateAccessTokenAsync(string userId, string newAccessToken, DateTime expiresAt)
+        public async Task UpdateAccessTokenAsync(UserGmailToken user, string newAccessToken, DateTime expiresAt)
         {
-            var user = await _dbContext.UserGmailTokens.FirstOrDefaultAsync(u => u.UserId == userId); 
-
-            if (user is null)
-                throw new Exception("User not found");
-
             user.AccessToken = newAccessToken;
             user.ExpiresAt = expiresAt;
 
