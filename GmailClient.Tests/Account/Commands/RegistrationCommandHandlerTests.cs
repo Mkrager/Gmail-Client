@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using GmailClient.Application.Contracts.Identity;
 using GmailClient.Application.Features.Account.Commands.Registration;
-using GmailClient.Application.Features.Account.Queries.Authentication;
 using GmailClient.Application.Profiles;
 using GmailClient.Tests.Mocks;
 using Moq;

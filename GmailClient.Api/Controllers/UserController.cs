@@ -1,6 +1,7 @@
 ﻿using GmailClient.Application.Contracts;
 using GmailClient.Application.Features.User.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GmailClient.Api.Controllers
@@ -9,6 +10,7 @@ namespace GmailClient.Api.Controllers
     [ApiController]
     public class UserController(IMediator mediator, ICurrentUserService currentUserService) : Controller
     {
+        [Authorize]
         [HttpGet(Name = "GetUserDetails")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]

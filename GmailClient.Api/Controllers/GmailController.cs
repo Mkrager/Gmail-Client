@@ -3,6 +3,7 @@ using GmailClient.Application.DTOs;
 using GmailClient.Application.Features.Gmails.Commands.SendEmail;
 using GmailClient.Application.Features.Gmails.Queries.GetMessagesList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GmailClient.Api.Controllers
@@ -11,6 +12,7 @@ namespace GmailClient.Api.Controllers
     [ApiController]
     public class GmailController(IMediator mediator, ICurrentUserService currentUserService) : Controller
     {
+        [Authorize]
         [HttpGet(Name = "GetAllMessages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
@@ -25,6 +27,7 @@ namespace GmailClient.Api.Controllers
             return Ok(dtos);
         }
 
+        [Authorize]
         [HttpPost(Name = "SendEmail")]
         public async Task<ActionResult> SendEmail(SendEmailRequest sendEmailRequest)
         {

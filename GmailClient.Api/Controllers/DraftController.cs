@@ -5,6 +5,7 @@ using GmailClient.Application.Features.Drafts.Commands.UpdateDraft;
 using GmailClient.Application.Features.Drafts.Queries.GetDraftDetails;
 using GmailClient.Application.Features.Drafts.Queries.GetDraftsList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GmailClient.Api.Controllers
@@ -13,6 +14,7 @@ namespace GmailClient.Api.Controllers
     [ApiController]
     public class DraftController(IMediator mediator, ICurrentUserService currentUserService) : Controller
     {
+        [Authorize]
         [HttpGet(Name = "GetAllDrafts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
@@ -23,6 +25,7 @@ namespace GmailClient.Api.Controllers
             return Ok(dtos);
         }
 
+        [Authorize]
         [HttpGet("{draftId}", Name = "GetDraftById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
@@ -37,6 +40,7 @@ namespace GmailClient.Api.Controllers
             return Ok(dtos);
         }
 
+        [Authorize]
         [HttpPost(Name = "CreateDraft")]
         public async Task<ActionResult> CreateDraft([FromBody] CreateDraftCommand createDraftCommand)
         {
@@ -47,6 +51,7 @@ namespace GmailClient.Api.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut(Name = "UpdateDraft")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,7 +64,7 @@ namespace GmailClient.Api.Controllers
             return NoContent();
         }
 
-
+        [Authorize]
         [HttpDelete("{draftId}", Name = "DeleteDraft")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
